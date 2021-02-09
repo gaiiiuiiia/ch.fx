@@ -1,0 +1,240 @@
+Fault: 30-01-2021 15:16:12 - Не верное имя файла для подключения IndexController
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
+On line 16
+
+Fault: 30-01-2021 15:16:53 - Не верное имя файла для подключения IndexController
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
+On line 16
+
+Fault: 30-01-2021 18:11:03 - Отсутствует шаблон - core/game/view/templates/creategame
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\controller\BaseController.php
+On line 87
+
+Fault: 30-01-2021 19:36:23 - Отсутсвуют шаблоны и стили в файлах настроек
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\controller\BaseController.php
+On line 95
+
+Fault: 30-01-2021 19:37:00 - Отсутсвуют шаблоны и стили в файлах настроек
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\controller\BaseController.php
+On line 95
+
+Fault: 30-01-2021 19:43:38 - Отсутсвуют шаблоны и стили в файлах настроек
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\controller\BaseController.php
+On line 95
+
+Fault: 04-02-2021 13:03:03 - Не верное имя файла для подключения core/game/controller/ImgController
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
+On line 25
+
+Fault: 04-02-2021 13:03:59 - Не верное имя файла для подключения core/game/controller/ImgController
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
+On line 25
+
+Fault: 04-02-2021 13:07:30 - Не верное имя файла для подключения core/game/controller/ImgController
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
+On line 25
+
+Fault: 04-02-2021 13:10:53 - Не верное имя файла для подключения core/game/controller/ImgController
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
+On line 25
+
+Fault: 04-02-2021 13:12:43 - Не верное имя файла для подключения core/game/controller/ImgController
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
+On line 25
+
+Fault: 04-02-2021 13:12:46 - Не верное имя файла для подключения core/game/controller/ImgController
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
+On line 25
+
+Fault: 04-02-2021 13:12:47 - Не верное имя файла для подключения core/game/controller/ImgController
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
+On line 25
+
+Fault: 04-02-2021 13:12:49 - Не верное имя файла для подключения core/game/controller/ImgController
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
+On line 25
+
+Fault: 04-02-2021 13:17:46 - Не верное имя файла для подключения core/game/controller/ImgController
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
+On line 25
+
+Fault: 04-02-2021 13:17:47 - Не верное имя файла для подключения core/game/controller/ImgController
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
+On line 25
+
+Fault: 04-02-2021 13:17:47 - Не верное имя файла для подключения core/game/controller/ImgController
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
+On line 25
+
+Fault: 04-02-2021 13:17:48 - Не верное имя файла для подключения core/game/controller/ImgController
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
+On line 25
+
+Fault: 04-02-2021 13:18:37 - Class core\game\controller\Main_fox.svgController does not exist
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\controller\BaseController.php
+On line 50
+
+Fault: 04-02-2021 13:18:39 - Class core\game\controller\Main_fox.svgController does not exist
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\controller\BaseController.php
+On line 50
+
+Fault: 04-02-2021 13:19:11 - Class core\game\controller\Main_fox.svgController does not exist
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\controller\BaseController.php
+On line 50
+
+Fault: 04-02-2021 13:19:53 - Не верное имя файла для подключения core/game/controller/ImgController
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
+On line 25
+
+Fault: 04-02-2021 13:22:03 - Не верное имя файла для подключения core/game/controller/GameController
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
+On line 25
+
+Fault: 05-02-2021 10:47:26 - Class core\game\controller\Favicon.icoController does not exist
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\controller\BaseController.php
+On line 49
+
+Fault: 05-02-2021 10:47:41 - Class core\game\controller\Favicon.icoController does not exist
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\controller\BaseController.php
+On line 49
+
+Fault: 05-02-2021 11:23:35 - Не верное имя файла для подключения core/game/controller/CoreController
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
+On line 26
+
+Fault: 05-02-2021 11:23:48 - Не верное имя файла для подключения core/game/controller/CoreController
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
+On line 26
+
+Fault: 05-02-2021 11:24:32 - Не верное имя файла для подключения core/game/controller/CoreController
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
+On line 26
+
+Fault: 05-02-2021 11:24:39 - Не верное имя файла для подключения core/game/controller/CoreController
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
+On line 26
+
+Fault: 05-02-2021 11:24:52 - Не верное имя файла для подключения core/game/controller/CoreController
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
+On line 26
+
+Fault: 05-02-2021 11:29:58 - Не верное имя файла для подключения core/game/controller/CoreController
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
+On line 26
+
+Fault: 05-02-2021 11:30:00 - Не верное имя файла для подключения core/game/controller/CoreController
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
+On line 26
+
+Fault: 05-02-2021 11:57:54 - Не верное имя файла для подключения core/game/controller/CoreController
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
+On line 26
+
+Fault: 05-02-2021 12:07:19 - Не верное имя файла для подключения core/game/controller/CoreController
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
+On line 26
+
+Fault: 05-02-2021 12:08:36 - Не верное имя файла для подключения core/game/controller/CoreController
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
+On line 26
+
+Fault: 05-02-2021 12:08:43 - Не верное имя файла для подключения core/game/controller/CoreController
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
+On line 26
+
+Fault: 05-02-2021 12:08:47 - Не верное имя файла для подключения core/game/controller/CoreController
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
+On line 26
+
+Fault: 05-02-2021 12:08:49 - Не верное имя файла для подключения core/game/controller/CoreController
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
+On line 26
+
+Fault: 05-02-2021 12:13:16 - Не верное имя файла для подключения core/game/controller/CoreController
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
+On line 26
+
+Fault: 05-02-2021 12:13:24 - Не верное имя файла для подключения core/game/controller/CoreController
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
+On line 26
+
+Fault: 05-02-2021 12:14:45 - Не верное имя файла для подключения core/game/controller/CoreController
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
+On line 26
+
+Fault: 05-02-2021 12:16:57 - Не верное имя файла для подключения core/game/controller/CoreController
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
+On line 26
+
+Fault: 05-02-2021 12:19:46 - Не верное имя файла для подключения core/game/controller/CoreController
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
+On line 26
+
+Fault: 05-02-2021 12:20:15 - Не верное имя файла для подключения core/game/controller/CoreController
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
+On line 26
+
+Fault: 05-02-2021 12:20:17 - Не верное имя файла для подключения core/game/controller/CoreController
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
+On line 26
+
+Fault: 05-02-2021 12:20:27 - Не верное имя файла для подключения core/game/controller/CoreController
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
+On line 26
+
+Fault: 05-02-2021 14:42:11 - Не верное имя файла для подключения core/game/controller/CoreController
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
+On line 26
+
+Fault: 05-02-2021 14:42:13 - Не верное имя файла для подключения core/game/controller/CoreController
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
+On line 26
+
+Fault: 05-02-2021 14:42:38 - Не верное имя файла для подключения core/game/controller/CoreController
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
+On line 26
+
+Fault: 05-02-2021 14:42:42 - Не верное имя файла для подключения core/game/controller/CoreController
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
+On line 26
+
+Fault: 05-02-2021 14:43:41 - Не верное имя файла для подключения core/game/controller/CoreController
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
+On line 26
+
+Fault: 05-02-2021 14:44:13 - Не верное имя файла для подключения core/game/controller/CoreController
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
+On line 26
+
+Fault: 05-02-2021 14:45:07 - Не верное имя файла для подключения core/game/controller/CoreController
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
+On line 26
+
+Fault: 05-02-2021 14:52:46 - Не верное имя файла для подключения core/game/controller/CoreController
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
+On line 26
+
+Fault: 05-02-2021 14:53:15 - Не верное имя файла для подключения core/game/controller/CoreController
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
+On line 26
+
+Fault: 05-02-2021 14:54:33 - Не верное имя файла для подключения core/game/controller/CoreController
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
+On line 26
+
+Fault: 05-02-2021 14:55:29 - Не верное имя файла для подключения core/game/controller/CoreController
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
+On line 26
+
+Fault: 09-02-2021 1:11:07 - Не верное имя файла для подключения core/game/model/GameManager
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
+On line 26
+
+Fault: 09-02-2021 1:11:08 - Не верное имя файла для подключения core/game/model/GameManager
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
+On line 26
+
+Fault: 09-02-2021 12:04:25 - Отсутствует шаблон - game
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\controller\BaseController.php
+On line 107
+

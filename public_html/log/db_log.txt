@@ -1,0 +1,24 @@
+Fault: 08-02-2021 16:41:06 - Ошибка в SQL запросе: INSERT INTO matches (date) VALUES (NOW()) - 0 
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\model\BaseModel.php
+In line 33
+
+Fault: 08-02-2021 20:34:02 - Ошибка в SQL запросе: INSERT INTO matches (date,players) VALUES (NOW(),'') - 1054 Unknown column 'players' in 'field list'
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\model\BaseModel.php
+In line 33
+
+Fault: 08-02-2021 21:11:38 - Ошибка в SQL запросе: INSERT INTO matches (date,players) VALUES (NOW(),'wonder - Bob') - 1054 Unknown column 'players' in 'field list'
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\model\BaseModel.php
+In line 33
+
+Fault: 08-02-2021 21:11:52 - Ошибка в SQL запросе: INSERT INTO matches (date,players) VALUES (NOW(),'wonder - Bob') - 1054 Unknown column 'players' in 'field list'
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\model\BaseModel.php
+In line 33
+
+Fault: 08-02-2021 21:12:31 - Ошибка в SQL запросе: INSERT INTO matches (date,players) VALUES (NOW(),'wonder - Bob') - 0 
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\model\BaseModel.php
+In line 33
+
+Fault: 08-02-2021 21:13:23 - Ошибка в SQL запросе: INSERT INTO matches (date,players) VALUES (NOW(),'wonder - Bob') - 1054 Unknown column 'players' in 'field list'
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\model\BaseModel.php
+In line 33
+
