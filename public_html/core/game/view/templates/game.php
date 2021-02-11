@@ -2,8 +2,7 @@
     <div class="container">
         <div class="game__inner">
             <h1 class="title game__title">
-                <? /*=$this->gameManager->getPlayerNames(' vs ')*/ ?>
-                Игрок-1 vs Игрок-2
+                <?= $this->gameManager->getPlayerNames(' vs ') ?>
             </h1>
             <div class="game__board">
                 <table class="game__field">
@@ -18,11 +17,11 @@
                          проверка на нечетность для опредеения, куда ставить ячейку, а куда барьер
 
                          */ ?>
-                    <?php for ($y = 1, $y_pos = 1; $y < $sizey + ($sizey - 1) + 1; $y++): ?>
+                    <?php for ($y = 1, $y_pos = 1; $y < $size_y + ($size_y - 1) + 1; $y++): ?>
 
                         <?php if ($y % 2 !== 0): ?>
                             <tr class="game__field-row">
-                                <?php for ($x = 1, $x_pos = 1; $x < $sizex + ($sizex - 1) + 1; $x++): ?>
+                                <?php for ($x = 1, $x_pos = 1; $x < $size_x + ($size_x - 1) + 1; $x++): ?>
                                     <td class="game__field-cell">
                                         <?php if ($x % 2 !== 0): ?>
                                             <div class="game__field-cell-tile"
@@ -37,7 +36,7 @@
                             </tr>
                         <?php else: ?>
                             <tr class="game__field-row-border">
-                                <?php for ($x = 1, $x_pos = 1, $y_pos++; $x < $sizex + ($sizex - 1) + 1; $x++): ?>
+                                <?php for ($x = 1, $x_pos = 1, $y_pos++; $x < $size_x + ($size_x - 1) + 1; $x++): ?>
                                     <td class="game__field-cell">
                                         <?php if ($x % 2 !== 0): ?>
                                             <div class="game__field-cell-border game__field-cell-border--horizontal"

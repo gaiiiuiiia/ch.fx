@@ -1,8 +1,12 @@
 
 window.onload = () => {
-    showPlayers();
-    showObstacles();
-    setClickOnPlayerListener();
+
+    if (document.querySelector('.game__field')) {
+        showPlayers();
+        showObstacles();
+        setClickOnPlayerListener();
+    }
+
 };
 
 

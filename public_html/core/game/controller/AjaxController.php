@@ -21,7 +21,9 @@ class AjaxController extends BaseGame
 
                 case 'getPlayers':
 
-                    $this->gameManager->loadGame(16);
+                    $gameData = $this->gameManager->loadGame($this->matchID);
+
+                    return $gameData;
 
                     break;
 

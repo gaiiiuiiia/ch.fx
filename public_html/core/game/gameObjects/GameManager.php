@@ -46,7 +46,7 @@ class GameManager
 
         $gameData = Dumper::getInstance()->loadDataFromDB($matchID);
 
-        // тут создаем объекты
+        return json_encode($gameData);
 
     }
 
@@ -69,7 +69,7 @@ class GameManager
 
     }
 
-    private function checkObstacle($obstacle) {
+    public function checkObstacle($obstacle) {
         // проверка обстакла на корректность не наползает ли он куда и не закрывает ли игрока
         return true;
     }

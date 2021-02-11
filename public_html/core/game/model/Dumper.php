@@ -24,13 +24,10 @@ class Dumper extends Model
                     'return_id' => true,
                 ]);
 
-            $dumpData = $data['map']->_getDump();
-            $dumpData['turnToMove'] = $data['turnToMove'];
-
             $this->add('match_logs', [
                 'fields' => [
                     'match_id' => $matchID,
-                    'state' => json_encode($dumpData),
+                    'state' => json_encode($data),
                 ],
             ]);
 
@@ -44,9 +41,10 @@ class Dumper extends Model
 
         // последняя запись в таблице match_logs с match_id = $matchID
         $gameData = $this->get('match_logs', [
-            'fields' => ['state'],
+            'fields' => [],
             'where' => ['match_id' => $matchID],
-            'order_direction' => 'DESC',
+            'order' => ['id'],
+            'order_direction' => ['DESC'],
             'limit' => 1,
         ])[0]['state'];
 
