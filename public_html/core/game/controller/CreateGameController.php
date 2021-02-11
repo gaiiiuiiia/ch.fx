@@ -7,8 +7,6 @@ namespace core\game\controller;
 class CreateGameController extends BaseGame
 {
 
-    protected $userData;
-
     protected function inputData() {
 
         $this->execBase();  // подгрузка стилей, получение модели
@@ -19,34 +17,23 @@ class CreateGameController extends BaseGame
 
             $this->createUserData();
 
-            $this->gameManager->initGame($this->userData);
+            $this->matchID = $this->gameManager->initGame($this->userData);
+
+            $_SESSION['match_id'] = $this->matchID;
 
             $this->template = TEMPLATE . 'game';
 
+            return [
+                'p1' => $this->gameManager->get('players')[0],
+                'p2' => $this->gameManager->get('players')[1],
+                'size_x' => $this->gameManager->get('map')->get('size')['x'],
+                'size_y' => $this->gameManager->get('map')->get('size')['y'],
+                'players' => $this->gameManager->get('players'),
+                'map' => $this->gameManager->get('map'),
+                'turnToMove' => $this->gameManager->get('turnToMove'),
+            ];
         }
 
-    }
-
-    protected function createUserData() {
-
-        if ($this->isPost()) {
-            foreach ($_POST as $key => $value) {
-                if ($value) {
-                    $this->userData[$key] = $value;
-                }
-            }
-            $this->userData['size'] = $this->createMapSize($this->userData['size']);
-        }
-
-    }
-
-    private function createMapSize($size) {
-
-        $size = explode('x', $size);
-        $x = $size[0];
-        $y = $size[1];
-
-        return compact('x', 'y');
     }
 
 }

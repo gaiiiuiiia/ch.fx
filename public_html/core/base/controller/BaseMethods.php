@@ -39,12 +39,27 @@ trait BaseMethods {
     }
 
     protected function isPost(){
-        return $_SERVER['REQUEST_METHOD'] == 'POST';
+        return $_SERVER['REQUEST_METHOD'] === 'POST';
     }
 
     protected function isAjax(){
         return isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
             $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest';
+    }
+
+    protected function clearStr($str) {
+
+        if (is_array($str)) {
+            foreach ($str as $key => $item) {
+                $str[$key] = $this->clearStr($item);
+            }
+
+            return $str;
+        }
+        else {
+            return trim(strip_tags($str));
+        }
+
     }
 
     protected function getStyles(){

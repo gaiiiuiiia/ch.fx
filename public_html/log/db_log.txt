@@ -22,3 +22,7 @@ Fault: 08-02-2021 21:13:23 - Ошибка в SQL запросе: INSERT INTO mat
 file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\model\BaseModel.php
 In line 33
 
+Fault: 11-02-2021 17:47:15 - Ошибка в SQL запросе: SELECT match_logs.state FROM match_logs  WHERE match_logs.match_id='16'   LIMIT 1 - 2006 MySQL server has gone away
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\model\BaseModel.php
+In line 33
+

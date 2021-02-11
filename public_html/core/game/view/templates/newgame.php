@@ -10,7 +10,7 @@
                     </li>
                     <li class="form__item">
                         <label class="form__item-wrapper">Размер поля
-                            <select class="form__item-entry" name="size">
+                            <select class="form__item-entry" name="mapSize">
                                 <option class="form__item-entry-option" value="5x5">5 x 5</option>
                                 <option class="form__item-entry-option" value="6x5">6 x 5</option>
                                 <option class="form__item-entry-option" value="7x5">7 x 5</option>

@@ -181,16 +181,20 @@ body {
 }
 
 .game__field-cell-tile {
-    background-color: #ffc168;
-}
-
-.game__field-cell-tile {
     min-width: 50px;
     min-height: 50px;
     max-width: 80px;
     max-height: 80px;
     border: 1px solid #781f04;
     border-radius: 5px;
+    background-color: #fef3e3;
+    transition: background-color;
+    transition-duration: 0.2s;
+    transition-timing-function: ease;
+}
+
+.game__field-cell-tile:hover {
+    background-color: #f9e6ca;
 }
 
 .game__field-cell-border {

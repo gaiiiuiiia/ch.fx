@@ -5,7 +5,7 @@ namespace core\game\gameObjects;
 
 
 use core\base\controller\Singleton;
-use core\game\model\Model;
+use core\game\model\Dumper;
 
 
 class GameManager
@@ -22,13 +22,14 @@ class GameManager
         $this->map = Map::getInstance();
     }
 
-
     public function initGame($gameData) {
 
-        $initialObstacles = $gameData['random_obst'] ? $this->generateObstacles(mt_rand(4, 7), $gameData['size']) : [];
-        $this->createPlayers($gameData['name'], $gameData['size'], $gameData['amount_obst']);
+        $this->createPlayers($gameData['name'], $gameData['mapSize'], $gameData['amount_obst']);
 
-        $this->map->init($gameData['size'], $initialObstacles, $this->players);
+        $this->map->init($gameData['mapSize'], [], $this->players);
+
+        if ($gameData['random_obst'])
+            $this->map->generateObstacles(mt_rand(4, 7));
 
         foreach ($this->players as $player) {
             $player->__setMap($this->map);
@@ -37,9 +38,15 @@ class GameManager
         // установка очередности хода
         $this->nextPlayerTurnToMove();
 
-        $this->saveDataToDB();
+        return $this->saveDataToDB();
 
+    }
 
+    public function loadGame($matchID) {
+
+        $gameData = Dumper::getInstance()->loadDataFromDB($matchID);
+
+        // тут создаем объекты
 
     }
 
@@ -62,24 +69,6 @@ class GameManager
 
     }
 
-    private function generateObstacles($amount, $mapSize) {
-
-        $obstacles = [];
-
-        while (count($obstacles) < $amount) {
-
-            $obstacle = Obstacle::getRandomObstacle($mapSize);
-
-            if ($this->checkObstacle($obstacle)) {
-                $obstacles[] = $obstacle;
-            }
-
-        }
-
-        return $obstacles;
-
-    }
-
     private function checkObstacle($obstacle) {
         // проверка обстакла на корректность не наползает ли он куда и не закрывает ли игрока
         return true;
@@ -92,46 +81,12 @@ class GameManager
             : mt_rand(0, count($this->players) - 1);
     }
 
-    /**
-     * @param false $matchID
-     *
-     * $map->_getDump() returns:
-        'size' => ['x' => int, 'y' => int]
-        'obstacles' => [
-                       [[fromx, fromy, tox, toy], [fromx, fromy, tox, toy]],
-                       ...
-                       [[fromx, fromy, tox, toy], [fromx, fromy, tox, toy]]
-        ]
-        'players' => [['name' => ...,
-                       'position' => ['x' => int, 'y' => int],
-                       'amountObstacles' => int],
+    protected function saveDataToDB($matchID = false){
+        $data = $this->map->_getDump();
+        $data['turnToMove'] = $this->turnToMove;
+        $data['playerNames'] = $this->getPlayerNames(' - ');
 
-                       ['name' => ...,
-                       'position' => ['x' => int, 'y' => int],
-                       'amountObstacles' => int]
-                       ]
-
-     */
-    protected function saveDataToDB($matchID = false) {
-
-        $matchID = $matchID ?:
-            Model::getInstance()->add('matches', [
-                'fields' => [
-                    'date' => 'NOW()',
-                    'players' => $this->getPlayerNames(' - '),
-                ],
-                'return_id' => true,
-            ]);
-
-        $dumpData = $this->map->_getDump();
-        $dumpData['turnToMove'] = $this->turnToMove;
-
-        Model::getInstance()->add('match_logs', [
-            'fields' => [
-                'match_id' => $matchID,
-                'state' => json_encode($dumpData),
-            ],
-        ]);
+        return Dumper::getInstance()->saveDataToDB($data, $matchID);
     }
 
 

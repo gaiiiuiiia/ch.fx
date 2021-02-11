@@ -14,6 +14,7 @@ const CSS_JS = [
     ],
     'scripts' => [
         'core/game/view/js/functions.js',
+        'core/game/view/js/scripts.js',
     ],
 ];
 
