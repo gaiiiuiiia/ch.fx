@@ -9,7 +9,11 @@
             </div>
             <div class="main__buttons">
                 <a class="btn main__btn" href="#">Правила</a>
+                <?php if ($this->matchID): ?>
+                    <a class="btn main__btn main__btn--primary" href="<?=PATH?>play">Продолжить игру</a>
+                <?php endif; ?>
                 <a class="btn main__btn main__btn--primary" href="<?=PATH?>new">Новая игра</a>
+
             </div>
         </div>
     </div>

@@ -45,7 +45,7 @@ class GameManager
     public function loadGame($matchID) {
 
         $gameData = Dumper::getInstance()->loadDataFromDB($matchID);
-
+        // тут надо инициализировать поля менеджера
         return json_encode($gameData);
 
     }

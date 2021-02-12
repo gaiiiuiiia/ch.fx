@@ -2,7 +2,7 @@
     <div class="container">
         <div class="game__inner">
             <h1 class="title game__title">
-                <?= $this->gameManager->getPlayerNames(' vs ') ?>
+                <?= $playerNames ?>
             </h1>
             <div class="game__board">
                 <table class="game__field">
@@ -54,7 +54,7 @@
                 </div>
             </div>
             <div class="game__buttons">
-                <button class="btn game__btn" name="btn-1">Кнопка</button>
+                <a class="btn game__btn" href="<?= PATH ?>" id="end_game">Завершить игру</a>
                 <button class="btn game__btn" name="btn-1">Кнопка</button>
                 <button class="btn game__btn" name="btn-1">Кнопка</button>
             </div>

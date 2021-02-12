@@ -1,7 +1,7 @@
 <section class="main">
     <div class="container">
         <div class="main__inner">
-            <form class="form main__form" action="<?= PATH ?>new" method="POST">
+            <form class="form main__form" action="<?= PATH ?>play" method="POST">
                 <ul class="form__items">
                     <li class="form__item">
                         <label class="form__item-wrapper">Имя

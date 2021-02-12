@@ -19,11 +19,19 @@ class AjaxController extends BaseGame
 
             switch ($this->ajaxData['ajax']) {
 
-                case 'getPlayers':
+                case 'getGameData':
 
                     $gameData = $this->gameManager->loadGame($this->matchID);
 
                     return $gameData;
+
+                    break;
+
+                case 'endGame':
+
+                    unset($_SESSION['match_id']);
+
+                    return PATH;
 
                     break;
 

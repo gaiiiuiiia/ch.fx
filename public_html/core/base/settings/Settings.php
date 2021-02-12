@@ -19,7 +19,8 @@ class Settings
         'game' => [
             'controller' => 'core/game/controller/',
             'routes' => [
-                'new' => 'CreateGame/inputData/outputData',
+                'new' => 'Newgame/inputData/outputData',
+                'play' => 'CreateGame/inputData/outputData'
             ],
         ],
         'default' => [

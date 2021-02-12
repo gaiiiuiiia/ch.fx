@@ -9,31 +9,39 @@ class CreateGameController extends BaseGame
 
     protected function inputData() {
 
-        $this->execBase();  // подгрузка стилей, получение модели
+        $this->template = TEMPLATE . 'game';
 
-        $this->template = TEMPLATE . 'newgame';
+        $this->execBase();
 
-        if (isset($_POST['start_game'])) {
+        if (!isset($_POST['start_game'])) {
 
-            $this->createUserData();
+            if ($this->matchID) {
+                $this->gameManager->loadGame($this->matchID);
+            }
+            else {
+                $this->redirect(PATH . 'new');
+            }
+        }
+        else {
 
-            $this->matchID = $this->gameManager->initGame($this->userData);
+            // Обновили страничку - загружаем игру, а не создаем новую
+            if ($this->matchID) {
+                $this->gameManager->loadGame($this->matchID);
+            }
+            else {
+                $this->createUserData();
 
-            $_SESSION['match_id'] = $this->matchID;
+                $this->matchID = $this->gameManager->initGame($this->userData);
 
-            $this->template = TEMPLATE . 'game';
-
-            return [
-                'p1' => $this->gameManager->get('players')[0],
-                'p2' => $this->gameManager->get('players')[1],
-                'size_x' => $this->gameManager->get('map')->get('size')['x'],
-                'size_y' => $this->gameManager->get('map')->get('size')['y'],
-                'players' => $this->gameManager->get('players'),
-                'map' => $this->gameManager->get('map'),
-                'turnToMove' => $this->gameManager->get('turnToMove'),
-            ];
+                $_SESSION['match_id'] = $this->matchID;
+            }
         }
 
+        return [
+            'size_x' => $this->gameManager->get('map')->get('size')['x'],
+            'size_y' => $this->gameManager->get('map')->get('size')['y'],
+            'playerNames' => $this->gameManager->getPlayerNames(' vs '),
+        ];
     }
 
 }
