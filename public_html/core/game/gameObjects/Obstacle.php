@@ -49,6 +49,34 @@ class Obstacle
 
     }
 
+    /**
+     * @param $obs1 - array of two Obstacle instances
+     * @param $obs2
+     * @return bool true if obstacles collides
+     */
+    static public function isCollided($obs1, $obs2) {
+
+        // obstacle is a array of two Obstacle objects
+        // with 'fromx', 'fromy', 'tox', 'toy' props
+        if (is_array($obs1) && is_array($obs2)) {
+
+            foreach ($obs1 as $part1){
+                foreach ($obs2 as $part2) {
+                    if (   $part1->get('fromx') === $part2->get('fromx')
+                        && $part1->get('fromy') === $part2->get('fromy')
+                        && $part1->get('tox')   === $part2->get('tox')
+                        && $part1->get('toy')   === $part2->get('toy')) {
+                            return true;
+                    }
+                }
+            }
+
+            return false;
+
+        }
+
+    }
+
     static private function getNextPartOfObstacle($obstacle, $direction) {
 
         $fromx = $direction === 'row' ? $obstacle->get('fromx') + 1 : $obstacle->get('fromx');

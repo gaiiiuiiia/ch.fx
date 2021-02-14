@@ -183,6 +183,9 @@ body {
 }
 
 .game__field-cell-tile {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     height: 50px;
     width: 50px;
     border: 1px solid #781f04;
@@ -203,6 +206,10 @@ body {
     min-height: 6px;
 }
 
+.game__field-cell-border--active {
+    background-color: red;
+}
+
 .game__field-cell-border--vertical {
     min-height: 50px;
 }
@@ -216,8 +223,8 @@ body {
     text-align: center;
     background-color: aquamarine;
     color: #ab190c;
-    min-width: 100%;
-    min-height: 100%;
+    width: 70%;
+    height: 70%;
     font-weight: 700;
     cursor: default;
 }

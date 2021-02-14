@@ -5,7 +5,7 @@ namespace core\game\gameObjects;
 
 
 use core\base\controller\Singleton;
-use MongoDB\Driver\Manager;
+
 
 class Map
 {
@@ -25,26 +25,18 @@ class Map
 
     public function generateObstacles($amount) {
 
-        $obstacles = [];
-
-        while (count($obstacles) < $amount) {
+        $count = 0;
+        while ($count < $amount) {
 
             $obstacle = Obstacle::getRandomObstacle($this->size);
 
             if (GameManager::getInstance()->checkObstacle($obstacle)) {
-                $obstacles[] = $obstacle;
+                $this->obstacles[] = $obstacle;
+                $count++;
             }
-
         }
 
-        return $this->obstacles += $obstacles;
-
-    }
-
-    public function checkObstacle($obstacle) {
-
         return true;
-
     }
 
     public function get($property) {

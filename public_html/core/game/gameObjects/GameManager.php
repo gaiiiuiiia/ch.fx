@@ -31,7 +31,7 @@ class GameManager
         $this->map->init($gameData['mapSize'], [], $this->players);
 
         // тут уже карта заполняется случайными препятствиями
-        if ($gameData['random_obst'])
+        if ($gameData['randomObst'])
             $this->map->generateObstacles(mt_rand(4, 7));
 
         // установка очередности хода
@@ -88,8 +88,19 @@ class GameManager
 
     }
 
-    public function checkObstacle($obstacle) {
+    public function checkObstacle($newObstacle) {
         // проверка обстакла на корректность не наползает ли он куда и не закрывает ли игрока
+
+        $allObstacles = $this->map->get('obstacles');
+
+        if (is_array($allObstacles) && $allObstacles) {
+
+            foreach ($allObstacles as $obstacle) {
+                if (Obstacle::isCollided($obstacle, $newObstacle)) {
+                    return false;
+                }
+            }
+        }
         return true;
     }
 
