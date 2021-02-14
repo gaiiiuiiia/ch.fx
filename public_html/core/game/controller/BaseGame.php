@@ -5,6 +5,8 @@ namespace core\game\controller;
 
 
 use core\base\controller\BaseController;
+use core\base\exceptions\GameException;
+use core\base\settings\Settings;
 use core\game\gameObjects\GameManager;
 use core\game\model\Model;
 
@@ -51,10 +53,22 @@ abstract class BaseGame extends BaseController
 
     protected function createUserData() {
 
+        $validate = Settings::get('validate');
+
         if ($this->isPost()) {
             foreach ($_POST as $key => $value) {
                 if ($value) {
-                    $this->userData[$key] = $this->clearStr($value);
+                    if ($validate[$key]) {
+                        if ($this->validate($key, $value)) {
+                            $this->userData[$key] = $this->clearStr($value);
+                        }
+                        else {
+                            throw new GameException('Данные не прошли валидацию');
+                        }
+                    }
+                    else {
+                        $this->userData[$key] = $this->clearStr($value);
+                    }
                 }
             }
             $this->userData['mapSize'] = $this->createMapSize($this->userData['mapSize']);
@@ -62,11 +76,42 @@ abstract class BaseGame extends BaseController
 
     }
 
+    protected function validate($key, $value) {
+
+        $validateParams = Settings::get('validate')[$key];
+
+        if (is_array($validateParams) && $validateParams) {
+
+            foreach ($validateParams as $param => $valParam) {
+                switch ($param) {
+
+                    case 'inGameSettings':
+                        if ($valParam) {
+                            $gameSettings = Settings::get('gameSettings')[$key];
+                            if (in_array($value, $gameSettings)) {
+                                continue 2;
+                            }
+                            return false;
+                        }
+                        break;
+                }
+
+            }
+
+            return true;
+
+        }
+        else {
+            throw new GameException('Некорректные валидационные параметры');
+        }
+
+    }
+
     private function createMapSize($size) {
 
         $size = explode('x', $size);
-        $x = $size[0];
-        $y = $size[1];
+        $x = $this->clearNum($size[0]);
+        $y = $this->clearNum($size[1]);
 
         return compact('x', 'y');
     }

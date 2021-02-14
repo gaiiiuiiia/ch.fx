@@ -62,6 +62,12 @@ trait BaseMethods {
 
     }
 
+    protected function clearNum($num){
+
+        return (!empty($num) && preg_match('/\d/', $num))
+            ? preg_replace('/[^\d.]/', '', $num) * 1 : 0;
+    }
+
     protected function getStyles(){
         if ($this->styles){
             foreach ($this->styles as $style){

@@ -11,6 +11,7 @@ require_once 'core/base/settings/internalSettings.php';
 
 use core\base\controller\BaseRoute;
 use core\base\exceptions\DbException;
+use core\base\exceptions\GameException;
 use core\base\exceptions\RouteException;
 
 try {
@@ -20,6 +21,9 @@ catch (RouteException $e) {
     exit($e->getMessage());
 }
 catch (DbException $e) {
+    exit($e->getMessage());
+}
+catch (GameException $e) {
     exit($e->getMessage());
 }
 

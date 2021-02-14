@@ -1,6 +1,7 @@
 
 window.onload = () => {
 
+    // событие на кнопку "завершение игры"
     document.querySelector('#end_game').onclick = function (e) {
 
         e.preventDefault();
@@ -16,20 +17,15 @@ window.onload = () => {
 
     };
 
+    // если показано поле, загрузить информацию игры
     if (document.querySelector('.game__field')) {
-
-        let gameData = getGameData();
-
-        console.log(gameData);
-
-        //showPlayers();
-        //showObstacles();
-        //setClickOnPlayerListener();
+        showGame();
+        setClickOnPlayerListener();
     }
 
 };
 
-function getGameData() {
+function showGame() {
 
     Ajax({
         type: 'post',
@@ -39,15 +35,18 @@ function getGameData() {
     }).then( (result) => {
 
         try{
-            console.log('res - ', result);
-            return JSON.parse(result);
+            let gameData = JSON.parse(result);
+            console.log(gameData);
+
+            showPlayers(gameData['players']);
+            showObstacles(gameData['obstacles']);
+
         }
         catch (e) {
             alert('Внутрення ошибка! Пришел не правильный JSON');
             console.log('Ошибка - ' + e + '; Результат - ' + result);
+            return false;
         }
-
-    } ).catch( (result) => {
 
     } );
 
@@ -64,41 +63,29 @@ function setClickOnPlayerListener() {
 
 function getPossibleMoves() {
 
-    return;
-
-    Ajax({
-        data: {
-            ajax: 'getPossibleMoves'
-        },
-    }).
-    then( (result) => {
-        // write some code
-    } ).
-    catch( (result) => {} );
-
 }
 
-function showPlayers() {
+function showPlayers(data) {
 
-    Ajax({
-        type: 'post',
-        data: {
-            ajax:'getPlayers',
-        },
-    }).then( (result) => {
+    console.log('data is ',  data);
 
-        try{
-            result = JSON.parse(result);
+    for (let player of data) {
 
-            console.log(result);
+        if (player.hasOwnProperty('position')) {
+
+            let playerPosition = player['position'];
+            console.log(playerPosition);
+
+            let fieldTile = document.getElementById(`tile-${playerPosition['x']}-${playerPosition['y']}`);
+
+            let playerDiv = document.createElement('div');
+            playerDiv.classList.add('player');
+            playerDiv.innerHTML = player['name'];
+            fieldTile.append(playerDiv);
+
         }
-        catch (e) {
-            alert('Внутрення ошибка!');
-        }
 
-    } ).catch( (result) => {
-
-    } );
+    }
 
 }
 

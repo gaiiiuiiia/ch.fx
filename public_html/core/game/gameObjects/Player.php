@@ -17,17 +17,13 @@ class Player
      * @param $name
      * @param $position
      * @param $amountObstacles
-     * @param false $map - $map must be initialized after players
+     * @param $map
      */
-    public function __construct($name, $position, $amountObstacles, $map = false) {
+    public function __construct($name, $position, $amountObstacles, $map) {
 
         $this->name = $name;
         $this->position = $position;
         $this->amountObstacles = $amountObstacles;
-        $this->map = false;
-    }
-
-    public function __setMap($map) {
         $this->map = $map;
     }
 

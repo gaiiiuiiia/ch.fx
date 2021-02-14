@@ -183,10 +183,8 @@ body {
 }
 
 .game__field-cell-tile {
-    min-width: 50px;
-    min-height: 50px;
-    max-width: 80px;
-    max-height: 80px;
+    height: 50px;
+    width: 50px;
     border: 1px solid #781f04;
     border-radius: 5px;
     background-color: #fef3e3;
@@ -211,6 +209,17 @@ body {
 
 .game__field-cell-border--horizontal {
     min-width: 50px;
+}
+
+.player {
+    font-size: 10px;
+    text-align: center;
+    background-color: aquamarine;
+    color: #ab190c;
+    min-width: 100%;
+    min-height: 100%;
+    font-weight: 700;
+    cursor: default;
 }
 
 .footer {

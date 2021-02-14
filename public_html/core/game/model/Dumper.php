@@ -48,7 +48,7 @@ class Dumper extends Model
             'limit' => 1,
         ])[0]['state'];
 
-        return json_decode($gameData);
+        return json_decode($gameData, true);
 
     }
 

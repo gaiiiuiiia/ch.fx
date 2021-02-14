@@ -13,7 +13,7 @@ class CreateGameController extends BaseGame
 
         $this->execBase();
 
-        if (!isset($_POST['start_game'])) {
+        if (!isset($_POST['startGame'])) {
 
             if ($this->matchID) {
                 $this->gameManager->loadGame($this->matchID);

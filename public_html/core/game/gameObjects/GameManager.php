@@ -5,6 +5,7 @@ namespace core\game\gameObjects;
 
 
 use core\base\controller\Singleton;
+use core\base\exceptions\GameException;
 use core\game\model\Dumper;
 
 
@@ -26,14 +27,12 @@ class GameManager
 
         $this->createPlayers($gameData['name'], $gameData['mapSize'], $gameData['amount_obst']);
 
+        // изначально список обсталков пуст
         $this->map->init($gameData['mapSize'], [], $this->players);
 
+        // тут уже карта заполняется случайными препятствиями
         if ($gameData['random_obst'])
             $this->map->generateObstacles(mt_rand(4, 7));
-
-        foreach ($this->players as $player) {
-            $player->__setMap($this->map);
-        }
 
         // установка очередности хода
         $this->nextPlayerTurnToMove();
@@ -45,7 +44,12 @@ class GameManager
     public function loadGame($matchID) {
 
         $gameData = Dumper::getInstance()->loadDataFromDB($matchID);
-        // тут надо инициализировать поля менеджера
+
+        $this->loadPlayers($gameData['players']);
+        $this->turnToMove = $gameData['turnToMove'];
+
+        $this->map->init($gameData['size'], $gameData['obstacles'], $this->players);
+
         return json_encode($gameData);
 
     }
@@ -57,15 +61,30 @@ class GameManager
     private function createPlayers($name, $mapSize, $amountObst) {
 
         $p1_pos = [
-            'x' => intdiv($mapSize['x'], 2),
+            'x' => ceil($mapSize['x'] / 2),
             'y' => 1,
         ];
         $p2_pos = [
-            'x' => intdiv($mapSize['x'], 2),
+            'x' => ceil($mapSize['x']/ 2),
             'y' => $mapSize['y'],
         ];
-        $this->players[] = new Player($name, $p1_pos, $amountObst);
-        $this->players[] = new Player('Fox(AI)', $p2_pos, $amountObst);
+        $this->players[] = new Player($name, $p1_pos, $amountObst, $this->map);
+        $this->players[] = new Player('Fox(AI)', $p2_pos, $amountObst, $this->map);
+
+    }
+
+    private function loadPlayers($data) {
+
+        if ($data && is_array($data)) {
+
+            foreach ($data as $player) {
+                $this->players[] = new Player($player['name'], $player['position'], $player['amountObstacles'], $this->map);
+            }
+
+        }
+        else {
+            throw new GameException('Ошибка загрузки игроков');
+        }
 
     }
 
