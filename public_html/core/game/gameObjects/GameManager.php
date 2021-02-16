@@ -19,16 +19,16 @@ class GameManager
 
     protected $turnToMove;  // Игрок, чья очередь делать ход
 
-    private function __construct() {
-        $this->map = Map::getInstance();
-    }
-
     public function initGame($gameData) {
 
-        $this->createPlayers($gameData['name'], $gameData['mapSize'], $gameData['amount_obst']);
+        $this->map = Map::getInstance();
 
         // изначально список обсталков пуст
-        $this->map->init($gameData['mapSize'], [], $this->players);
+        $this->map->init($gameData['mapSize']);
+
+        $this->createPlayers($gameData['name'], $gameData['mapSize'], $gameData['amountObst']);
+
+        $this->map->setPlayers($this->players);
 
         // тут уже карта заполняется случайными препятствиями
         if ($gameData['randomObst'])
@@ -45,10 +45,14 @@ class GameManager
 
         $gameData = Dumper::getInstance()->loadDataFromDB($matchID);
 
+        $this->map = Map::getInstance();
+
         $this->loadPlayers($gameData['players']);
         $this->turnToMove = $gameData['turnToMove'];
 
-        $this->map->init($gameData['size'], $gameData['obstacles'], $this->players);
+        $this->map->init($gameData['size'], $gameData['obstacles']);
+
+        $this->map->setPlayers($this->players);
 
         return json_encode($gameData);
 
@@ -61,13 +65,15 @@ class GameManager
     private function createPlayers($name, $mapSize, $amountObst) {
 
         $p1_pos = [
-            'x' => ceil($mapSize['x'] / 2),
+            'x' => (int) ceil($mapSize['x'] / 2),
             'y' => 1,
         ];
+
         $p2_pos = [
-            'x' => ceil($mapSize['x']/ 2),
+            'x' => (int) ceil($mapSize['x']/ 2),
             'y' => $mapSize['y'],
         ];
+
         $this->players[] = new Player($name, $p1_pos, $amountObst, $this->map);
         $this->players[] = new Player('Fox(AI)', $p2_pos, $amountObst, $this->map);
 
@@ -95,11 +101,20 @@ class GameManager
 
         if (is_array($allObstacles) && $allObstacles) {
 
+            // проверка препятствий на наложение друг на друга
             foreach ($allObstacles as $obstacle) {
                 if (Obstacle::isCollided($obstacle, $newObstacle)) {
                     return false;
                 }
             }
+
+            // проверка на наличие хода для игроков
+            /*foreach ($this->players as $player) {
+                if (!$player->getPathToFinish($allObstacles + $newObstacle)) {
+                    return false;
+                }
+            }*/
+
         }
         return true;
     }

@@ -62,11 +62,8 @@ class Obstacle
 
             foreach ($obs1 as $part1){
                 foreach ($obs2 as $part2) {
-                    if (   $part1->get('fromx') === $part2->get('fromx')
-                        && $part1->get('fromy') === $part2->get('fromy')
-                        && $part1->get('tox')   === $part2->get('tox')
-                        && $part1->get('toy')   === $part2->get('toy')) {
-                            return true;
+                    if ($part1 == $part2) {
+                        return true;
                     }
                 }
             }
@@ -85,6 +82,17 @@ class Obstacle
         $toy   = $direction === 'col' ? $obstacle->get('toy')   + 1 : $obstacle->get('toy');
 
         return new Obstacle($fromx, $fromy, $tox, $toy);
+
+    }
+
+    public function isMovePrevented($from, $to) {
+
+        if (   ($this->fromx === $from['x'] && $this->fromy === $from['y'] && $this->tox === $to['x'] && $this->toy === $to['y'])
+            || ($this->fromx === $to['x'] && $this->fromy) === $to['y'] && $this->tox === $from['x'] && $this->toy === $from['y']) {
+            return true;
+        }
+
+        return false;
 
     }
 
