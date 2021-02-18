@@ -1,7 +1,7 @@
 <?php
 
 
-namespace core\game\gameObjects;
+namespace core\game\classes;
 
 
 class Obstacle

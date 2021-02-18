@@ -1,7 +1,7 @@
 <?php
 
 
-namespace core\game\gameObjects;
+namespace core\game\classes;
 
 
 use core\base\controller\Singleton;
@@ -18,16 +18,22 @@ class Map
     protected $obstacles;
 
     /**
-     * @param $size
-     * @param null $obstacles - initial obstacles, when the map will create
+     * @param array $size
+     * @param array $obstacles - initial obstacles, when the map will create
+     * @param int $amountRandomObstacles - количество случайных препятствий, которые будут сгенерированы на карте
      */
-    public function init($size, $obstacles = null)
+    public function init(array $size, array $obstacles = [], int $amountRandomObstacles = 0)
     {
         $this->size = $size;
         $this->obstacles = $obstacles;
+
+        if ($amountRandomObstacles > 0) {
+            $this->generateObstacles($amountRandomObstacles);
+        }
+
     }
 
-    public function setPlayers($listOfPlayers) {
+    public function setPlayers(array $listOfPlayers) {
 
         if (is_array($listOfPlayers) && $listOfPlayers) {
             foreach ($listOfPlayers as $player) {
@@ -39,7 +45,7 @@ class Map
         }
     }
 
-    public function setObstacles($obstacles) {
+    public function setObstacles(array $obstacles) {
 
         if (is_array($obstacles) && $obstacles) {
             $this->obstacles = $obstacles;
@@ -47,7 +53,7 @@ class Map
 
     }
 
-    public function generateObstacles($amount) {
+    private function generateObstacles(int $amount) {
 
         $count = 0;
         while ($count < $amount) {
@@ -70,8 +76,9 @@ class Map
     /**
      * @param $player - Объект Player.
      * Метод возвращает позицию оппонента $player
+     * @return false
      */
-    public function getOpponentPosition($player) {
+    public function getOpponentPosition(Player $player) {
 
         if (is_array($this->players) && $this->players) {
             foreach ($this->players as $_player) {
@@ -84,7 +91,7 @@ class Map
         return false;
     }
 
-    public function isMovePreventedByObstacle($from, $to) {
+    public function isMovePreventedByObstacle(array $from, array $to) {
 
         if (is_array($this->obstacles) && $this->obstacles) {
 
@@ -102,7 +109,7 @@ class Map
         throw new GameException('Некоректный вызов функции проверки препятствий');
     }
 
-    public function isInBoard($position) {
+    public function isInBoard(array $position) {
         return ($position['x'] > 0 && $position['x'] <= $this->size['x'])
             && ($position['y'] > 0 && $position['y'] <= $this->size['y']);
     }

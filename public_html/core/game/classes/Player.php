@@ -1,10 +1,10 @@
 <?php
 
 
-namespace core\game\gameObjects;
+namespace core\game\classes;
 
 
-class Player
+class Player extends BasePlayer
 {
 
     protected $name;
@@ -13,40 +13,57 @@ class Player
     protected $amountObstacles;
     protected $map;
 
+    protected $moves;
+
     /**
      * Player constructor.
-     * @param $name
-     * @param $position
-     * @param $amountObstacles
-     * @param $map
+     * @param String $name
+     * @param array $position
+     * @param int $amountObstacles
+     * @param Map $map
      */
-    public function __construct($name, $position, $amountObstacles, $map) {
-
+    public function __construct(string $name, array $position, int $amountObstacles, Map $map)
+    {
         $this->name = $name;
         $this->position = $position;
         $this->amountObstacles = $amountObstacles;
         $this->map = $map;
-        $this->goalRow = $this->setGoalRow();
+        $this->setMoves();
+        $this->goalRow = $this->position['y'] === 1 ? $map->get('size')['y'] : 1;
     }
 
-    public function get($property) {
+    protected function setMoves()
+    {
+        $this->moves = [
+            ['x' => $this->position['x'] - 1, 'y' => $this->position['y']],      // 1
+            ['x' => $this->position['x'], 'y' => $this->position['y'] - 1],  // 2
+            ['x' => $this->position['x'] + 1, 'y' => $this->position['y']],      // 3
+            ['x' => $this->position['x'], 'y' => $this->position['y'] + 1],  // 4
+        ];
+    }
+
+    public function showMoves() : array
+    {
+        return $this->moves;
+    }
+
+    public function move() : array
+    {
+        return [];
+    }
+
+    public function get(string $property)
+    {
         return $this->$property;
     }
 
     /**
-     * @param false $obstacles - list of Obstacles
+     * @param $obstacles - list of Obstacle instances
      * Method return a path to finish for current Player.
      * if $obstacles are given, path will be find using given obstacles
      */
-    public function getPathToFinish($obstacles = false) {
-
-        /**
-         * как проверить существование пути
-         * 1) получить список доступных сейчас ходов
-         * 2) для каждого полученного хода получть доступные ходы.
-         * исключать ходы обратно!
-         * 3) если на каком-то шаге мы получим ячейку финишной черты, то завершаем цикл
-         */
+    public function getPathToFinish(array $obstacles = [])
+    {
 
         if ($obstacles) {
 
@@ -55,7 +72,9 @@ class Player
             try {
                 $this->map->setObstacles($obstacles);
 
-                // создал очередь для возможных позиций. изначально в ней только позиция игрока
+                $pathToFinish =
+
+                    // создал очередь для возможных позиций. изначально в ней только позиция игрока
                 $steps = new \SplQueue();
                 $steps->enqueue($this->position);
 
@@ -70,8 +89,7 @@ class Player
 
                     $iterLimit--;
                 }
-            }
-            catch (\Exception $e) {
+            } catch (\Exception $e) {
 
             } finally {
                 $this->map->setObstacles($currentObstacles);
@@ -80,14 +98,14 @@ class Player
 
             $this->getPossibleMoves($this->position);
 
-        }
-        else {
+        } else {
 
         }
 
     }
 
-    protected function getPossibleMoves($position) {
+    protected function getPossibleMoves(array $position)
+    {
 
         /**
          * позиции "плюсик", куда в теории можно сходить из точки $position
@@ -97,9 +115,9 @@ class Player
          */
         $possibleMoves = [
             ['x' => $position['x'] - 1, 'y' => $position['y']],      // 1
-            ['x' => $position['x'],     'y' => $position['y'] - 1],  // 2
+            ['x' => $position['x'], 'y' => $position['y'] - 1],  // 2
             ['x' => $position['x'] + 1, 'y' => $position['y']],      // 3
-            ['x' => $position['x'],     'y' => $position['y'] + 1],  // 4
+            ['x' => $position['x'], 'y' => $position['y'] + 1],  // 4
         ];
 
         foreach ($possibleMoves as $key => $move) {
@@ -114,11 +132,13 @@ class Player
         return $possibleMoves;
     }
 
-    private function isOnGoalRow($position) {
+    private function isOnGoalRow(array $position)
+    {
         return $position['y'] === $this->goalRow;
     }
 
-    public function _getDump() {
+    public function _getDump()
+    {
         return [
             'name' => $this->name,
             'position' => $this->position,
@@ -127,13 +147,5 @@ class Player
         ];
     }
 
-    private function setGoalRow() {
-
-        if (!$this->goalRow) {
-            return $this->position['y'] === 1 ? $this->map->get('size')['y'] : 1;
-        }
-
-        return $this->goalRow;
-    }
 
 }

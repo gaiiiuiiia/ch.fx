@@ -1,7 +1,7 @@
 <?php
 
 
-namespace core\game\gameObjects;
+namespace core\game\classes;
 
 
 use core\base\controller\Singleton;
@@ -24,15 +24,11 @@ class GameManager
         $this->map = Map::getInstance();
 
         // изначально список обсталков пуст
-        $this->map->init($gameData['mapSize']);
+        $this->map->init($gameData['mapSize'], [], $gameData['randomObst'] ? mt_rand(4, 7) : 0);
 
         $this->createPlayers($gameData['name'], $gameData['mapSize'], $gameData['amountObst']);
 
         $this->map->setPlayers($this->players);
-
-        // тут уже карта заполняется случайными препятствиями
-        if ($gameData['randomObst'])
-            $this->map->generateObstacles(mt_rand(4, 7));
 
         // установка очередности хода
         $this->nextPlayerTurnToMove();
