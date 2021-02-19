@@ -4,18 +4,19 @@
 namespace core\game\classes;
 
 
-abstract class Dumper
+use core\game\interfaces\IDumpable;
+use core\game\interfaces\IDumper;
+use core\game\model\Model;
+
+abstract class Dumper extends Model implements IDumper
 {
 
-    public function __construct()
+    protected $data;
+
+    public function setData(IDumpable $obj)
     {
+        $this->data = $obj->getDump();
     }
-
-    protected function write()
-    {
-
-    }
-
 
 
 }

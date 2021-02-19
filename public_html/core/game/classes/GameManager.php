@@ -6,10 +6,11 @@ namespace core\game\classes;
 
 use core\base\controller\Singleton;
 use core\base\exceptions\GameException;
+use core\game\interfaces\IDumpable;
 use core\game\model\Dumper;
 
 
-class GameManager
+class GameManager implements IDumpable
 {
 
     use Singleton, GameManagerSubfunctions;
@@ -120,6 +121,19 @@ class GameManager
         $this->turnToMove = $this->turnToMove
             ? ($this->turnToMove + 1) % count($this->players)
             : mt_rand(0, count($this->players) - 1);
+    }
+
+    public function getDump(): array
+    {
+        $players = [];
+        foreach ($this->players as $player) {
+            $players[] = json_encode($player);
+        }
+
+        return [
+            'players' => $this->players,
+            'map' => $this->map,
+        ];
     }
 
     protected function saveDataToDB($matchID = false){

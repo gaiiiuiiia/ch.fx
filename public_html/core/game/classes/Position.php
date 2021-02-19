@@ -6,7 +6,7 @@ namespace core\game\classes;
 
 use core\game\interfaces\IPosition;
 
-class Position implements IPosition
+class Position implements IPosition, \JsonSerializable
 {
 
     protected $x;
@@ -26,6 +26,14 @@ class Position implements IPosition
     public function getY(): int
     {
         return $this->y;
+    }
+
+    public function jsonSerialize()
+    {
+        return [
+            'x' => $this->x,
+            'y' => $this->y,
+        ];
     }
 
 

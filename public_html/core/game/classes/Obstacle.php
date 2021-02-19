@@ -4,32 +4,31 @@
 namespace core\game\classes;
 
 
-class Obstacle
+class Obstacle implements \JsonSerializable
 {
 
-    protected $fromx;
-    protected $fromy;
-    protected $tox;
-    protected $toy;
+    protected $from;
+    protected $to;
 
-    public function __construct($fromx, $fromy, $tox, $toy) {
-        $this->fromx = $fromx;
-        $this->fromy = $fromy;
-        $this->tox = $tox;
-        $this->toy = $toy;
+    public function __construct(Position $from, Position $to) {
+        $this->from = $from;
+        $this->to = $to;
     }
 
     public function get($property) {
         return $this->$property;
     }
 
-    public function _getDump() {
+    public function jsonSerialize()
+    {
         return [
-            'fromx' => $this->fromx,
-            'fromy' => $this->fromy,
-            'tox' => $this->tox,
-            'toy' => $this->toy,
+            'from' => json_encode($this->from),
+            'to' => json_encode($this->to),
         ];
+    }
+
+    public function _getDump() {
+
     }
 
     static public function getRandomObstacle($mapSize) {

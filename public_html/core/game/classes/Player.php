@@ -4,7 +4,7 @@
 namespace core\game\classes;
 
 
-class Player extends BasePlayer
+class Player extends BasePlayer implements \JsonSerializable
 {
 
     protected $name;
@@ -135,6 +135,15 @@ class Player extends BasePlayer
     private function isOnGoalRow(array $position)
     {
         return $position['y'] === $this->goalRow;
+    }
+
+    public function jsonSerialize() {
+        return [
+            'name' => $this->name,
+            'position' => $this->position,
+            'amountObstacles' => $this->amountObstacles,
+            'goalRow' => $this->goalRow,
+        ];
     }
 
     public function _getDump()

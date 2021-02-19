@@ -9,13 +9,15 @@ use core\game\interfaces\IMovable;
 
 abstract class BasePlayer implements IMovable
 {
+    protected $name;
     protected $position;
     protected $goalRow;
     protected $map;
     protected $moves;
 
-    public function __construct(Position $position, IMap $map)
+    public function __construct(string $name, Position $position, IMap $map)
     {
+        $this->name = $name;
         $this->position = $position;
         $this->map = $map;
         $this->setGoalRow();

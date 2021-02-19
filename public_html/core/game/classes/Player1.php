@@ -4,8 +4,18 @@
 namespace core\game\classes;
 
 
-class Player1 extends BasePlayer
+use core\game\interfaces\IMap;
+
+class Player1 extends BasePlayer implements \JsonSerializable
 {
+
+    protected $amountObstacles;
+
+    public function __construct(string $name, Position $position, IMap $map, int $amountObstacles)
+    {
+        parent::__construct($name, $position, $map);
+        $this->amountObstacles = $amountObstacles;
+    }
 
     protected function setMoves()
     {
@@ -31,6 +41,16 @@ class Player1 extends BasePlayer
     public function showMoves(): array
     {
         return $this->moves;
+    }
+
+    public function jsonSerialize()
+    {
+        return [
+            'name' => $this->name,
+            'position' => json_encode($this->position),
+            'amountObstacles' => $this->amountObstacles,
+            'goalRow' => $this->goalRow,
+        ];
     }
 
 }
