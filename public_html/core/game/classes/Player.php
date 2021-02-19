@@ -32,16 +32,6 @@ class Player extends BasePlayer implements \JsonSerializable
         $this->goalRow = $this->position['y'] === 1 ? $map->get('size')['y'] : 1;
     }
 
-    protected function setMoves()
-    {
-        $this->moves = [
-            ['x' => $this->position['x'] - 1, 'y' => $this->position['y']],      // 1
-            ['x' => $this->position['x'], 'y' => $this->position['y'] - 1],  // 2
-            ['x' => $this->position['x'] + 1, 'y' => $this->position['y']],      // 3
-            ['x' => $this->position['x'], 'y' => $this->position['y'] + 1],  // 4
-        ];
-    }
-
     public function showMoves() : array
     {
         return $this->moves;
@@ -106,6 +96,7 @@ class Player extends BasePlayer implements \JsonSerializable
 
     protected function getPossibleMoves(array $position)
     {
+        // relocate to map class
 
         /**
          * позиции "плюсик", куда в теории можно сходить из точки $position

@@ -22,4 +22,16 @@ trait GameManagerSubfunctions
         return $names;
     }
 
+    public function getMapSizeX() :int
+    {
+        assert($this->map instanceof Map);
+        return $this->map->getSizeX();
+    }
+
+    public function getMapSizeY() :int
+    {
+        assert($this->map instanceof Map);
+        return $this->map->getSizeY();
+    }
+
 }

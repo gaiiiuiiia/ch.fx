@@ -3,12 +3,12 @@
 
 namespace core\game\interfaces;
 
+use core\game\classes\Position;
+
 interface IMovable
 {
-    /**
-     * @return array - ['x' => int, 'y' => int] - position on board
-     */
-    public function move() : array;
+
+    public function move() : Position;
 
     /**
      * @return mixed

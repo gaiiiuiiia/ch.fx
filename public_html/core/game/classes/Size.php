@@ -15,7 +15,13 @@ class Size
         $this->y = $y;
     }
 
-    public function get($property) : int {
-        return $this->$property;
+    public function getX() : int
+    {
+        return $this->x;
+    }
+
+    public function getY() : int
+    {
+        return $this->y;
     }
 }

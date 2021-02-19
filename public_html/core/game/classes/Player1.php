@@ -20,10 +20,10 @@ class Player1 extends BasePlayer implements \JsonSerializable
     protected function setMoves()
     {
         $this->moves = [
-            ['x' => $this->position['x'] - 1, 'y' => $this->position['y']],      // 1
-            ['x' => $this->position['x'], 'y' => $this->position['y'] - 1],  // 2
-            ['x' => $this->position['x'] + 1, 'y' => $this->position['y']],      // 3
-            ['x' => $this->position['x'], 'y' => $this->position['y'] + 1],  // 4
+            ['x' => $this->position->getX() - 1, 'y' => $this->position->getY()],      // 1
+            ['x' => $this->position->getX(), 'y' => $this->position->getY() - 1],  // 2
+            ['x' => $this->position->getX() + 1, 'y' => $this->position->getY()],      // 3
+            ['x' => $this->position->getX(), 'y' => $this->position->getY() + 1],  // 4
         ];
     }
 
@@ -33,9 +33,9 @@ class Player1 extends BasePlayer implements \JsonSerializable
             ? $this->map->getSizeY() : 1;
     }
 
-    public function move(): array
+    public function move(): Position
     {
-        return [];
+        return new Position(1, 1);
     }
 
     public function showMoves(): array

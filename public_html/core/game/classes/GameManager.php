@@ -20,25 +20,25 @@ class GameManager implements IDumpable
 
     protected $turnToMove;  // Игрок, чья очередь делать ход
 
-    public function initGame($gameData) {
+    public function initGame(array $gameData)
+    {
 
         $this->map = Map::getInstance();
 
         // изначально список обсталков пуст
-        $this->map->init($gameData['mapSize'], [], $gameData['randomObst'] ? mt_rand(4, 7) : 0);
+        $this->map->init($gameData['mapSize'], $gameData['randomObst'] ? mt_rand(4, 7) : 0);
 
         $this->createPlayers($gameData['name'], $gameData['mapSize'], $gameData['amountObst']);
 
         $this->map->setPlayers($this->players);
 
         // установка очередности хода
-        $this->nextPlayerTurnToMove();
-
-        return $this->saveDataToDB();
+        $this->setNextPlayerTurnToMove();
 
     }
 
-    public function loadGame($matchID) {
+    public function loadGame(int $matchID)
+    {
 
         $gameData = Dumper::getInstance()->loadDataFromDB($matchID);
 
@@ -55,48 +55,44 @@ class GameManager implements IDumpable
 
     }
 
-    public function get($property) {
+    public function get($property)
+    {
         return self::getInstance()->$property;
     }
 
-    private function createPlayers($name, $mapSize, $amountObst) {
+    private function createPlayers(string $name, Size $mapSize, int $amountObst)
+    {
 
-        $p1_pos = [
-            'x' => (int) ceil($mapSize['x'] / 2),
-            'y' => 1,
-        ];
+        $p1_pos = new Position((int)ceil($mapSize->getX() / 2), 1);
+        $p2_pos = new Position((int)ceil($mapSize->getX() / 2), $mapSize->getY());
 
-        $p2_pos = [
-            'x' => (int) ceil($mapSize['x']/ 2),
-            'y' => $mapSize['y'],
-        ];
-
-        $this->players[] = new Player($name, $p1_pos, $amountObst, $this->map);
-        $this->players[] = new Player('Fox(AI)', $p2_pos, $amountObst, $this->map);
+        $this->players[] = new Player1($name, $p1_pos, $this->map, $amountObst);
+        $this->players[] = new Player1('Fox(AI)', $p2_pos, $this->map, $amountObst);
 
     }
 
-    private function loadPlayers($data) {
+    private function loadPlayers(array $data)
+    {
 
-        if ($data && is_array($data)) {
+        if ($data) {
 
             foreach ($data as $player) {
-                $this->players[] = new Player($player['name'], $player['position'], $player['amountObstacles'], $this->map);
+                $this->players[] = new Player1($player['name'], $player['position'], $this->map, $player['amountObstacles']);
             }
 
-        }
-        else {
+        } else {
             throw new GameException('Ошибка загрузки игроков');
         }
 
     }
 
-    public function checkObstacle($newObstacle) {
+    public function checkObstacle(array $newObstacle)
+    {
         // проверка обстакла на корректность не наползает ли он куда и не закрывает ли игрока
 
-        $allObstacles = $this->map->get('obstacles');
+        $allObstacles = $this->map->getObstacles();
 
-        if (is_array($allObstacles) && $allObstacles) {
+        if ($allObstacles) {
 
             // проверка препятствий на наложение друг на друга
             foreach ($allObstacles as $obstacle) {
@@ -116,7 +112,8 @@ class GameManager implements IDumpable
         return true;
     }
 
-    protected function nextPlayerTurnToMove() {
+    protected function setNextPlayerTurnToMove()
+    {
 
         $this->turnToMove = $this->turnToMove
             ? ($this->turnToMove + 1) % count($this->players)
@@ -125,18 +122,16 @@ class GameManager implements IDumpable
 
     public function getDump(): array
     {
-        $players = [];
-        foreach ($this->players as $player) {
-            $players[] = json_encode($player);
-        }
-
         return [
             'players' => $this->players,
             'map' => $this->map,
+            'turnToMove' => $this->turnToMove,
+            'playerNames' => $this->getPlayerNames(' - '),
         ];
     }
 
-    protected function saveDataToDB($matchID = false){
+    protected function saveDataToDB(int $matchID = null)
+    {
         $data = $this->map->_getDump();
         $data['turnToMove'] = $this->turnToMove;
         $data['playerNames'] = $this->getPlayerNames(' - ');

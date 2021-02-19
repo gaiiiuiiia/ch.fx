@@ -7,7 +7,8 @@ namespace core\game\controller;
 use core\base\controller\BaseController;
 use core\base\exceptions\GameException;
 use core\base\settings\Settings;
-use core\game\gameObjects\GameManager;
+use core\game\classes\GameManager;
+use core\game\classes\Size;
 use core\game\model\Model;
 
 abstract class BaseGame extends BaseController
@@ -59,9 +60,12 @@ abstract class BaseGame extends BaseController
             foreach ($_POST as $key => $value) {
                 if ($value) {
                     if ($validate[$key]) {
-                        if ($this->validate($key, $value)) {
-                            $this->userData[$key] = $this->clearStr($value);
+                        if ($this->userData[$key] = $this->validate($key, $value)) {
+                            continue;
                         }
+                        /*if ($this->validate($key, $value)) {
+                            $this->userData[$key] = $this->clearStr($value);
+                        }*/
                         else {
                             throw new GameException('Данные не прошли валидацию');
                         }
@@ -71,9 +75,16 @@ abstract class BaseGame extends BaseController
                     }
                 }
             }
-            $this->userData['mapSize'] = $this->createMapSize($this->userData['mapSize']);
         }
 
+    }
+
+    protected function createSize(array $size) {
+
+        $x = $this->clearNum($size[0]);
+        $y = $this->clearNum($size[1]);
+
+        return new Size($x, $y);
     }
 
     protected function validate($key, $value) {
@@ -98,22 +109,17 @@ abstract class BaseGame extends BaseController
 
             }
 
-            return true;
+            if ($key = 'mapSize') {
+                return $this->createSize(explode('x', $value));
+            }
+
+            return $value;
 
         }
         else {
             throw new GameException('Некорректные валидационные параметры');
         }
 
-    }
-
-    private function createMapSize($size) {
-
-        $size = explode('x', $size);
-        $x = $this->clearNum($size[0]);
-        $y = $this->clearNum($size[1]);
-
-        return compact('x', 'y');
     }
 
 

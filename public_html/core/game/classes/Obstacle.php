@@ -10,12 +10,14 @@ class Obstacle implements \JsonSerializable
     protected $from;
     protected $to;
 
-    public function __construct(Position $from, Position $to) {
+    public function __construct(Position $from, Position $to)
+    {
         $this->from = $from;
         $this->to = $to;
     }
 
-    public function get($property) {
+    public function get($property)
+    {
         return $this->$property;
     }
 
@@ -27,21 +29,22 @@ class Obstacle implements \JsonSerializable
         ];
     }
 
-    public function _getDump() {
-
-    }
-
-    static public function getRandomObstacle($mapSize) {
+    static public function getRandomObstacle(Size $mapSize): array
+    {
 
         $direction = mt_rand(0, 1) ? 'row' : 'col';
 
-        $fromx = mt_rand(1, $mapSize['x'] - 1);
-        $fromy = mt_rand(1, $mapSize['y'] - 1);
+        $from = new Position(
+            mt_rand(1, $mapSize->getX() - 1),
+            mt_rand(1, $mapSize->getY() - 1)
+        );
 
-        $tox = $direction === 'row' ? $fromx : $fromx + 1;
-        $toy = $direction === 'col' ? $fromy : $fromy + 1;
+        $to = new Position(
+            $direction === 'row' ? $from->getX() : $from->getX() + 1,
+            $direction === 'col' ? $from->getY() : $from->getY() + 1
+        );
 
-        $obstacle_1 = new Obstacle($fromx, $fromy, $tox, $toy);
+        $obstacle_1 = new Obstacle($from, $to);
         $obstacle_2 = Obstacle::getNextPartOfObstacle($obstacle_1, $direction);
 
         return [$obstacle_1, $obstacle_2];
@@ -50,44 +53,46 @@ class Obstacle implements \JsonSerializable
 
     /**
      * @param $obs1 - array of two Obstacle instances
-     * @param $obs2
+     * @param $obs2 - array of two Obstacle instances
      * @return bool true if obstacles collides
      */
-    static public function isCollided($obs1, $obs2) {
+    static public function isCollided(array $obs1, array $obs2): bool
+    {
 
         // obstacle is a array of two Obstacle objects
         // with 'fromx', 'fromy', 'tox', 'toy' props
-        if (is_array($obs1) && is_array($obs2)) {
-
-            foreach ($obs1 as $part1){
-                foreach ($obs2 as $part2) {
-                    if ($part1 == $part2) {
-                        return true;
-                    }
+        foreach ($obs1 as $part1) {
+            foreach ($obs2 as $part2) {
+                if ($part1 == $part2) {
+                    return true;
                 }
             }
-
-            return false;
-
         }
 
-    }
-
-    static private function getNextPartOfObstacle($obstacle, $direction) {
-
-        $fromx = $direction === 'row' ? $obstacle->get('fromx') + 1 : $obstacle->get('fromx');
-        $fromy = $direction === 'col' ? $obstacle->get('fromy') + 1 : $obstacle->get('fromy');
-        $tox   = $direction === 'row' ? $obstacle->get('tox')   + 1 : $obstacle->get('tox');
-        $toy   = $direction === 'col' ? $obstacle->get('toy')   + 1 : $obstacle->get('toy');
-
-        return new Obstacle($fromx, $fromy, $tox, $toy);
+        return false;
 
     }
 
-    public function isMovePrevented($from, $to) {
+    static private function getNextPartOfObstacle(Obstacle $obstacle, string $direction): Obstacle
+    {
+        $from = new Position(
+            $direction === 'row' ? $obstacle->get('from')->getX() + 1 : $obstacle->get('from')->getX(),
+            $direction === 'col' ? $obstacle->get('from')->getY() + 1 : $obstacle->get('from')->getY()
+        );
+        $to = new Position(
+            $direction === 'row' ? $obstacle->get('to')->getX() + 1 : $obstacle->get('to')->getX(),
+            $direction === 'col' ? $obstacle->get('to')->getY() + 1 : $obstacle->get('to')->getY()
+        );
 
-        if (   ($this->fromx === $from['x'] && $this->fromy === $from['y'] && $this->tox === $to['x'] && $this->toy === $to['y'])
-            || ($this->fromx === $to['x'] && $this->fromy) === $to['y'] && $this->tox === $from['x'] && $this->toy === $from['y']) {
+        return new Obstacle($from, $to);
+
+    }
+
+    public function isMovePrevented(Position $from, Position $to): bool
+    {
+
+        if (($this->from->isSamePosition($from) && $this->to->isSamePosition($to))
+            || ($this->from->isSamePosition($to)) && $this->to->isSamePosition($from)) {
             return true;
         }
 

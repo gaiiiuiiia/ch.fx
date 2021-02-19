@@ -28,6 +28,11 @@ class Position implements IPosition, \JsonSerializable
         return $this->y;
     }
 
+    public function isSamePosition(Position $pos) : bool
+    {
+        return $this->x === $pos->getX() && $this->y === $pos->getY();
+    }
+
     public function jsonSerialize()
     {
         return [

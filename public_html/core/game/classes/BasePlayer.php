@@ -21,6 +21,7 @@ abstract class BasePlayer implements IMovable
         $this->position = $position;
         $this->map = $map;
         $this->setGoalRow();
+        $this->setMoves();
     }
 
     abstract protected function setGoalRow();

@@ -4,6 +4,8 @@
 namespace core\game\controller;
 
 
+use core\game\classes\DBDumper;
+
 class CreateGameController extends BaseGame
 {
 
@@ -31,15 +33,21 @@ class CreateGameController extends BaseGame
             else {
                 $this->createUserData();
 
-                $this->matchID = $this->gameManager->initGame($this->userData);
+                //$this->matchID = $this->gameManager->initGame($this->userData);
+
+                $this->gameManager->initGame($this->userData);
+
+                $dumper = new DBDumper();
+                $dumper->setData($this->gameManager);
+                $dumper->dump();
 
                 $_SESSION['match_id'] = $this->matchID;
             }
         }
 
         return [
-            'size_x' => $this->gameManager->get('map')->get('size')['x'],
-            'size_y' => $this->gameManager->get('map')->get('size')['y'],
+            'size_x' => $this->gameManager->getMapSizeX(), // методы описаны в трейте
+            'size_y' => $this->gameManager->getMapSizeY(),
             'playerNames' => $this->gameManager->getPlayerNames(' vs '),
         ];
     }

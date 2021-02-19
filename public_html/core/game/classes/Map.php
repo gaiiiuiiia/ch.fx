@@ -6,38 +6,42 @@ namespace core\game\classes;
 
 use core\base\controller\Singleton;
 use core\base\exceptions\GameException;
+use core\game\interfaces\IMap;
+use core\game\interfaces\IMovable;
+use core\game\interfaces\IPosition;
 
 
-class Map
+class Map extends BaseMap implements IMap
 {
 
     use Singleton;
 
-    protected $size;
     protected $players;
     protected $obstacles;
 
     /**
-     * @param array $size
-     * @param array $obstacles - initial obstacles, when the map will create
-     * @param int $amountRandomObstacles - количество случайных препятствий, которые будут сгенерированы на карте
+     * @param Size $size
+     * @param int $amountRandomObstacles
+     * @param array $obstacles - array of initial obstacles. WARNING!
+     * it must be like [[Obstacle, Obstacle], ..., [Obstacle, Obstacle]]
      */
-    public function init(array $size, array $obstacles = [], int $amountRandomObstacles = 0)
+    public function init(Size $size, int $amountRandomObstacles = 0, array $obstacles = [])
     {
         $this->size = $size;
+
         $this->obstacles = $obstacles;
 
         if ($amountRandomObstacles > 0) {
             $this->generateObstacles($amountRandomObstacles);
         }
-
     }
 
-    public function setPlayers(array $listOfPlayers) {
+    public function setPlayers(array $listOfPlayers)
+    {
 
         if (is_array($listOfPlayers) && $listOfPlayers) {
             foreach ($listOfPlayers as $player) {
-                if (!($player instanceof Player)) {
+                if (!($player instanceof BasePlayer)) {
                     throw new GameException('Неверно передан список игроков');
                 }
             }
@@ -45,7 +49,8 @@ class Map
         }
     }
 
-    public function setObstacles(array $obstacles) {
+    public function setObstacles(array $obstacles)
+    {
 
         if (is_array($obstacles) && $obstacles) {
             $this->obstacles = $obstacles;
@@ -53,7 +58,8 @@ class Map
 
     }
 
-    private function generateObstacles(int $amount) {
+    private function generateObstacles(int $amount)
+    {
 
         $count = 0;
         while ($count < $amount) {
@@ -69,7 +75,8 @@ class Map
         return true;
     }
 
-    public function get($property) {
+    public function get($property)
+    {
         return self::getInstance()->$property;
     }
 
@@ -78,7 +85,8 @@ class Map
      * Метод возвращает позицию оппонента $player
      * @return false
      */
-    public function getOpponentPosition(Player $player) {
+    public function getOpponentPosition(Player $player)
+    {
 
         if (is_array($this->players) && $this->players) {
             foreach ($this->players as $_player) {
@@ -91,7 +99,8 @@ class Map
         return false;
     }
 
-    public function isMovePreventedByObstacle(array $from, array $to) {
+    public function isMovePreventedByObstacle(array $from, array $to)
+    {
 
         if (is_array($this->obstacles) && $this->obstacles) {
 
@@ -109,12 +118,14 @@ class Map
         throw new GameException('Некоректный вызов функции проверки препятствий');
     }
 
-    public function isInBoard(array $position) {
+    public function isInBoard(array $position)
+    {
         return ($position['x'] > 0 && $position['x'] <= $this->size['x'])
             && ($position['y'] > 0 && $position['y'] <= $this->size['y']);
     }
 
-    public function _getDump() {
+    public function _getDump()
+    {
         return [
             'size' => $this->size,
             'obstacles' => $this->_getObstaclesDump(),
@@ -122,7 +133,8 @@ class Map
         ];
     }
 
-    private function _getObstaclesDump() {
+    private function _getObstaclesDump()
+    {
 
         $obstaclesDumpList = [];
 
@@ -139,7 +151,8 @@ class Map
         return $obstaclesDumpList;
     }
 
-    private function _getPlayersDump() {
+    private function _getPlayersDump()
+    {
 
         $playersDumpList = [];
 
@@ -152,4 +165,29 @@ class Map
         return $playersDumpList;
     }
 
+    public function pathToFinish(IMovable $obj): array
+    {
+        return [];
+    }
+
+    /**
+     * @param IPosition $position
+     * @param IMovable $object
+     * @return array
+     * возвращает возможные ходы для $object с позиции $position
+     */
+    public function getPossibleMoves(IPosition $position, IMovable $object): array
+    {
+        return [];
+    }
+
+    public function getObstacles(): array
+    {
+        return $this->obstacles;
+    }
+
+    public function getPlayers(): array
+    {
+        return $this->players;
+    }
 }
