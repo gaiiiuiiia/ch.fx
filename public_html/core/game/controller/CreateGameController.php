@@ -5,6 +5,7 @@ namespace core\game\controller;
 
 
 use core\game\classes\DBDumper;
+use core\game\classes\Loader;
 
 class CreateGameController extends BaseGame
 {
@@ -18,7 +19,8 @@ class CreateGameController extends BaseGame
         if (!isset($_POST['startGame'])) {
 
             if ($this->matchID) {
-                $this->gameManager->loadGame($this->matchID);
+                $gameData = (new Loader())->loadData($this->matchID);
+                $this->gameManager->loadGame($gameData);
             }
             else {
                 $this->redirect(PATH . 'new');
@@ -28,7 +30,8 @@ class CreateGameController extends BaseGame
 
             // Обновили страничку - загружаем игру, а не создаем новую
             if ($this->matchID) {
-                $this->gameManager->loadGame($this->matchID);
+                $gameData = (new Loader())->loadData($this->matchID);
+                $this->gameManager->loadGame($gameData);
             }
             else {
                 $this->createUserData();
@@ -37,16 +40,14 @@ class CreateGameController extends BaseGame
 
                 $this->gameManager->initGame($this->userData);
 
-                $dumper = new DBDumper();
-                $dumper->setData($this->gameManager);
-                $dumper->dump();
+                $this->matchID = (new DBDumper($this->gameManager))->saveDataToDB();  // сохраняю данные в базу
 
                 $_SESSION['match_id'] = $this->matchID;
             }
         }
 
         return [
-            'size_x' => $this->gameManager->getMapSizeX(), // методы описаны в трейте
+            'size_x' => $this->gameManager->getMapSizeX(), // методы описаны в трейте GameManagerSubfunctions
             'size_y' => $this->gameManager->getMapSizeY(),
             'playerNames' => $this->gameManager->getPlayerNames(' vs '),
         ];

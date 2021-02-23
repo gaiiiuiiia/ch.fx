@@ -15,7 +15,7 @@ interface IMap
      */
     public function pathToFinish(IMovable $obj) : array;
 
-    public function getPossibleMoves(IPosition $position, IMovable $object) : array;
+    //public function getPossibleMoves(IPosition $position, IMovable $object) : array;
 
     public function getSize() : Size;
 

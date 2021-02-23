@@ -55,8 +55,6 @@
             </div>
             <div class="game__buttons">
                 <a class="btn game__btn" href="<?= PATH ?>" id="end_game">Завершить игру</a>
-                <button class="btn game__btn" name="btn-1">Кнопка</button>
-                <button class="btn game__btn" name="btn-1">Кнопка</button>
             </div>
         </div>
     </div>

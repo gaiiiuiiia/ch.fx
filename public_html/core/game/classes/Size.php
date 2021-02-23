@@ -4,7 +4,7 @@
 namespace core\game\classes;
 
 
-class Size
+class Size implements \JsonSerializable
 {
     protected $x;
     protected $y;
@@ -23,5 +23,13 @@ class Size
     public function getY() : int
     {
         return $this->y;
+    }
+
+    public function jsonSerialize()
+    {
+        return [
+            'x' => $this->x,
+            'y' => $this->y,
+        ];
     }
 }

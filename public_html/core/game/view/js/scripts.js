@@ -40,7 +40,7 @@ function showGame() {
             console.log(gameData);
 
             showPlayers(gameData['players']);
-            showObstacles(gameData['obstacles']);
+            showObstacles(gameData['map']['obstacles']);
 
         }
         catch (e) {
@@ -68,13 +68,13 @@ function getPossibleMoves() {
 
 function showPlayers(data) {
 
-    if (typeof data !== 'undefined' && data instanceof Array) {
+    if (typeof data !== 'undefined') {
 
         for (let player of data) {
 
             if (player.hasOwnProperty('position')) {
 
-                let playerPosition = player['position'];
+                let playerPosition = JSON.parse(player['position']);
 
                 let fieldTile = document.getElementById(`tile-${playerPosition['x']}-${playerPosition['y']}`);
 
@@ -89,24 +89,27 @@ function showPlayers(data) {
 
 function showObstacles(data) {
 
-    console.log('data is ',  data);
+    if (typeof data !== 'undefined') {
 
-    if (typeof data !== 'undefined' && data instanceof Array) {
+        data = JSON.parse(data);
 
         for (let obstacle of data) {
 
-            // ставлю случайный цвет препятствию, хотя в стилях они все красные
             // для отладки
+            // ставлю случайный цвет препятствию, хотя в стилях они все красные
             let color = [
-                getRandomInt(0, 256),
-                getRandomInt(0, 256),
-                getRandomInt(0, 256),
+                256,
+                getRandomInt(0, 200),
+                getRandomInt(0, 100),
             ].join(',');
 
             for (let part of obstacle) {
 
+                let from = JSON.parse(part['from']);
+                let to = JSON.parse(part['to']);
+
                 let obst = document.getElementById(
-                    `obst-${part['fromx']}-${part['fromy']}-${part['tox']}-${part['toy']}`);
+                    `obst-${from['x']}-${from['y']}-${to['x']}-${to['y']}`);
 
                 obst.classList.add('game__field-cell-border--active');
                 obst.style.backgroundColor = `rgb(${color})`;

@@ -13,7 +13,6 @@ abstract class BasePlayer implements IMovable
     protected $position;
     protected $goalRow;
     protected $map;
-    protected $moves;
 
     public function __construct(string $name, Position $position, IMap $map)
     {
@@ -21,12 +20,8 @@ abstract class BasePlayer implements IMovable
         $this->position = $position;
         $this->map = $map;
         $this->setGoalRow();
-        $this->setMoves();
     }
 
     abstract protected function setGoalRow();
-
-    abstract protected function setMoves();
-
 
 }

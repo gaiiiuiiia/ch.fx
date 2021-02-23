@@ -4,111 +4,36 @@
 namespace core\game\classes;
 
 
+use core\game\interfaces\IMap;
+use core\game\interfaces\IPosition;
+
 class Player extends BasePlayer implements \JsonSerializable
 {
 
-    protected $name;
-    protected $position;
-    protected $goalRow;
     protected $amountObstacles;
-    protected $map;
 
-    protected $moves;
-
-    /**
-     * Player constructor.
-     * @param String $name
-     * @param array $position
-     * @param int $amountObstacles
-     * @param Map $map
-     */
-    public function __construct(string $name, array $position, int $amountObstacles, Map $map)
+    public function __construct(string $name, Position $position, IMap $map, int $amountObstacles)
     {
-        $this->name = $name;
-        $this->position = $position;
+        parent::__construct($name, $position, $map);
         $this->amountObstacles = $amountObstacles;
-        $this->map = $map;
-        $this->setMoves();
-        $this->goalRow = $this->position['y'] === 1 ? $map->get('size')['y'] : 1;
     }
 
-    public function showMoves() : array
+    protected function setGoalRow()
     {
-        return $this->moves;
+        $this->goalRow = $this->position->getX() === 1
+            ? $this->map->getSizeY() : 1;
     }
 
-    public function move() : array
-    {
-        return [];
-    }
-
-    public function get(string $property)
-    {
-        return $this->$property;
-    }
-
-    /**
-     * @param $obstacles - list of Obstacle instances
-     * Method return a path to finish for current Player.
-     * if $obstacles are given, path will be find using given obstacles
-     */
-    public function getPathToFinish(array $obstacles = [])
+    public function showMoves(IPosition $position = null) : array
     {
 
-        if ($obstacles) {
+        $position = $position ?: $this->position;
 
-            $currentObstacles = $this->map->get('obstacles');
-
-            try {
-                $this->map->setObstacles($obstacles);
-
-                $pathToFinish =
-
-                    // создал очередь для возможных позиций. изначально в ней только позиция игрока
-                $steps = new \SplQueue();
-                $steps->enqueue($this->position);
-
-                $iterLimit = 30;
-                $currentPosition = $steps->dequeue();
-                while ($iterLimit > 0 && !$this->isOnGoalRow($currentPosition)) {
-
-                    /*foreach ($this->getPossibleMoves($currentPosition) as $newPosition) {
-                        $steps->enqueue($newPosition);
-                    }
-                    */
-
-                    $iterLimit--;
-                }
-            } catch (\Exception $e) {
-
-            } finally {
-                $this->map->setObstacles($currentObstacles);
-            }
-
-
-            $this->getPossibleMoves($this->position);
-
-        } else {
-
-        }
-
-    }
-
-    protected function getPossibleMoves(array $position)
-    {
-        // relocate to map class
-
-        /**
-         * позиции "плюсик", куда в теории можно сходить из точки $position
-         * 0 2 0
-         * 1 P 3
-         * 0 4 0
-         */
-        $possibleMoves = [
-            ['x' => $position['x'] - 1, 'y' => $position['y']],      // 1
-            ['x' => $position['x'], 'y' => $position['y'] - 1],  // 2
-            ['x' => $position['x'] + 1, 'y' => $position['y']],      // 3
-            ['x' => $position['x'], 'y' => $position['y'] + 1],  // 4
+        $possibleMoves =  [
+            new Position($position->getX() - 1, $position->getY()),
+            new Position($position->getX(), $position->getY() - 1),
+            new Position($position->getX() + 1, $position->getY()),
+            new Position($position->getX(), $position->getY() + 1),
         ];
 
         foreach ($possibleMoves as $key => $move) {
@@ -123,29 +48,23 @@ class Player extends BasePlayer implements \JsonSerializable
         return $possibleMoves;
     }
 
-    private function isOnGoalRow(array $position)
+    public function move(): Position
     {
-        return $position['y'] === $this->goalRow;
+        return new Position(1, 1);
     }
 
-    public function jsonSerialize() {
-        return [
-            'name' => $this->name,
-            'position' => $this->position,
-            'amountObstacles' => $this->amountObstacles,
-            'goalRow' => $this->goalRow,
-        ];
+    public function getName() : string
+    {
+        return $this->name;
     }
 
-    public function _getDump()
+    public function jsonSerialize()
     {
         return [
             'name' => $this->name,
-            'position' => $this->position,
+            'position' => json_encode($this->position),
             'amountObstacles' => $this->amountObstacles,
-            'goalRow' => $this->goalRow,
         ];
     }
-
 
 }

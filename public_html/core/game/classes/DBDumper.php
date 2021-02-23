@@ -4,30 +4,26 @@
 namespace core\game\classes;
 
 
-use core\game\model\Model;
-
 class DBDumper extends Dumper
 {
-    protected $model;
-
-    public function __construct()
+    public function saveDataToDB(int $matchID = null): int
     {
-        $this->model = Model::getInstance();
+        $matchID = $matchID ?:
+            $this->model->add('matches', [
+                'fields' => [
+                    'date' => 'NOW()',
+                    'players' => $this->data['playerNames'],
+                ],
+                'return_id' => true,
+            ]);
+
+        $this->model->add('match_logs', [
+            'fields' => [
+                'match_id' => $matchID,
+                'state' => json_encode($this->data),
+            ],
+        ]);
+
+        return $matchID;
     }
-
-    public function dump()
-    {
-        // остановился здесь
-        foreach ($this->data as $prop => $value) {
-            $a = $prop;
-        }
-
-        $this->write();
-    }
-
-    protected function write()
-    {
-
-    }
-
 }

@@ -30,7 +30,7 @@ abstract class BaseGame extends BaseController
         $this->model = $this->model ?: Model::getInstance();
         $this->gameManager = $this->gameManager ?: GameManager::getInstance();
 
-        $this->matchID = $_SESSION['match_id'] ?: false;
+        $this->matchID = $_SESSION['match_id'] ?: null;
 
     }
 

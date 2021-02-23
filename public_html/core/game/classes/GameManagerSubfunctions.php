@@ -13,7 +13,7 @@ trait GameManagerSubfunctions
 
         if ($this->players) {
             foreach ($this->players as $player) {
-                $names[] = $player->get('name');
+                $names[] = $player->getName();
             }
         }
 

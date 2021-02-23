@@ -10,10 +10,6 @@ interface IMovable
 
     public function move() : Position;
 
-    /**
-     * @return mixed
-     * This method only shows how object can moving
-     */
-    public function showMoves() : array;
+    public function showMoves(IPosition $position) : array;
 
 }

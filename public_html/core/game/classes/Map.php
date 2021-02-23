@@ -11,7 +11,7 @@ use core\game\interfaces\IMovable;
 use core\game\interfaces\IPosition;
 
 
-class Map extends BaseMap implements IMap
+class Map extends BaseMap implements IMap, \JsonSerializable
 {
 
     use Singleton;
@@ -51,16 +51,13 @@ class Map extends BaseMap implements IMap
 
     public function setObstacles(array $obstacles)
     {
-
         if (is_array($obstacles) && $obstacles) {
             $this->obstacles = $obstacles;
         }
-
     }
 
     private function generateObstacles(int $amount)
     {
-
         $count = 0;
         while ($count < $amount) {
 
@@ -85,9 +82,8 @@ class Map extends BaseMap implements IMap
      * Метод возвращает позицию оппонента $player
      * @return false
      */
-    public function getOpponentPosition(Player $player)
+    public function getOpponentPosition(BasePlayer $player)
     {
-
         if (is_array($this->players) && $this->players) {
             foreach ($this->players as $_player) {
                 if ($player !== $_player) {
@@ -99,10 +95,9 @@ class Map extends BaseMap implements IMap
         return false;
     }
 
-    public function isMovePreventedByObstacle(array $from, array $to)
+    public function isMovePreventedByObstacle(IPosition $from, IPosition $to)
     {
-
-        if (is_array($this->obstacles) && $this->obstacles) {
+        if (is_array($this->obstacles)) {
 
             foreach ($this->obstacles as $obstacle) {
                 foreach ($obstacle as $part) {
@@ -118,65 +113,22 @@ class Map extends BaseMap implements IMap
         throw new GameException('Некоректный вызов функции проверки препятствий');
     }
 
-    public function isInBoard(array $position)
+    public function isInBoard(IPosition $position)
     {
-        return ($position['x'] > 0 && $position['x'] <= $this->size['x'])
-            && ($position['y'] > 0 && $position['y'] <= $this->size['y']);
+        return ($position->getX() > 0 && $position->getX() <= $this->size->getX())
+            && ($position->getY() > 0 && $position->getY() <= $this->size->getY());
     }
 
-    public function _getDump()
+    public function jsonSerialize()
     {
         return [
-            'size' => $this->size,
-            'obstacles' => $this->_getObstaclesDump(),
-            'players' => $this->_getPlayersDump(),
+            'size' => json_encode($this->size),
+            'obstacles' => json_encode($this->obstacles),
+            'players' => json_encode($this->players),
         ];
     }
 
-    private function _getObstaclesDump()
-    {
-
-        $obstaclesDumpList = [];
-
-        if ($this->obstacles) {
-            foreach ($this->obstacles as $obstacle) {
-                $obstacleDump = [];
-                foreach ($obstacle as $part) {
-                    $obstacleDump[] = $part->_getDump();
-                }
-                $obstaclesDumpList[] = $obstacleDump;
-            }
-        }
-
-        return $obstaclesDumpList;
-    }
-
-    private function _getPlayersDump()
-    {
-
-        $playersDumpList = [];
-
-        if ($this->players) {
-            foreach ($this->players as $player) {
-                $playersDumpList[] = $player->_getDump();
-            }
-        }
-
-        return $playersDumpList;
-    }
-
     public function pathToFinish(IMovable $obj): array
-    {
-        return [];
-    }
-
-    /**
-     * @param IPosition $position
-     * @param IMovable $object
-     * @return array
-     * возвращает возможные ходы для $object с позиции $position
-     */
-    public function getPossibleMoves(IPosition $position, IMovable $object): array
     {
         return [];
     }

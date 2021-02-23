@@ -7,7 +7,6 @@ namespace core\game\classes;
 use core\base\controller\Singleton;
 use core\base\exceptions\GameException;
 use core\game\interfaces\IDumpable;
-use core\game\model\Dumper;
 
 
 class GameManager implements IDumpable
@@ -37,19 +36,12 @@ class GameManager implements IDumpable
 
     }
 
-    public function loadGame(int $matchID)
+    public function loadGame(array $gameData)
     {
-
-        $gameData = Dumper::getInstance()->loadDataFromDB($matchID);
-
-        $this->map = Map::getInstance();
-
+        $this->loadMap($gameData['map']);
         $this->loadPlayers($gameData['players']);
-        $this->turnToMove = $gameData['turnToMove'];
-
-        $this->map->init($gameData['size'], $gameData['obstacles']);
-
         $this->map->setPlayers($this->players);
+        $this->turnToMove = $gameData['turnToMove'];
 
         return json_encode($gameData);
 
@@ -62,13 +54,11 @@ class GameManager implements IDumpable
 
     private function createPlayers(string $name, Size $mapSize, int $amountObst)
     {
-
         $p1_pos = new Position((int)ceil($mapSize->getX() / 2), 1);
         $p2_pos = new Position((int)ceil($mapSize->getX() / 2), $mapSize->getY());
 
-        $this->players[] = new Player1($name, $p1_pos, $this->map, $amountObst);
-        $this->players[] = new Player1('Fox(AI)', $p2_pos, $this->map, $amountObst);
-
+        $this->players[] = new Player($name, $p1_pos, $this->map, $amountObst);
+        $this->players[] = new Player('Fox(AI)', $p2_pos, $this->map, $amountObst);
     }
 
     private function loadPlayers(array $data)
@@ -77,13 +67,46 @@ class GameManager implements IDumpable
         if ($data) {
 
             foreach ($data as $player) {
-                $this->players[] = new Player1($player['name'], $player['position'], $this->map, $player['amountObstacles']);
+                $pos_ = json_decode($player['position'], true);
+                $position = new Position($pos_['x'], $pos_['y']);
+                $this->players[] = new Player($player['name'], $position, $this->map, $player['amountObstacles']);
             }
 
         } else {
             throw new GameException('Ошибка загрузки игроков');
         }
 
+    }
+
+    private function loadMap(array $data)
+    {
+        if ($data) {
+
+            foreach ($data as $key => $value) {
+                $data[$key] = json_decode($value, true);
+            }
+
+            $size = new Size($data['size']['x'], $data['size']['y']);
+
+            $obstacles = [];
+            foreach ($data['obstacles'] as $obs) {
+
+                $obstacle = [];
+                foreach ($obs as $part) {
+                    $from_= (array)json_decode($part['from'], true);
+                    $from = new Position($from_['x'], $from_['y']);
+
+                    $to_= (array)json_decode($part['to'], true);
+                    $to = new Position($to_['x'], $to_['y']);
+
+                    $obstacle[] = new Obstacle($from, $to);
+                }
+                $obstacles[] = $obstacle;
+            }
+
+            $this->map = Map::getInstance();
+            $this->map->init($size, 0, $obstacles);
+        }
     }
 
     public function checkObstacle(array $newObstacle)
@@ -129,15 +152,5 @@ class GameManager implements IDumpable
             'playerNames' => $this->getPlayerNames(' - '),
         ];
     }
-
-    protected function saveDataToDB(int $matchID = null)
-    {
-        $data = $this->map->_getDump();
-        $data['turnToMove'] = $this->turnToMove;
-        $data['playerNames'] = $this->getPlayerNames(' - ');
-
-        return Dumper::getInstance()->saveDataToDB($data, $matchID);
-    }
-
 
 }

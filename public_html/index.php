@@ -16,14 +16,11 @@ use core\base\exceptions\RouteException;
 
 try {
     BaseRoute::routeDirection();
-}
-catch (RouteException $e) {
+} catch (RouteException $e) {
     exit($e->getMessage());
-}
-catch (DbException $e) {
+} catch (DbException $e) {
     exit($e->getMessage());
-}
-catch (GameException $e) {
+} catch (GameException $e) {
     exit($e->getMessage());
 }
 

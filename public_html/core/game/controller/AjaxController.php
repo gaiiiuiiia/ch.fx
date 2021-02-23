@@ -4,6 +4,8 @@
 namespace core\game\controller;
 
 
+use core\game\classes\Loader;
+
 class AjaxController extends BaseGame
 {
 
@@ -21,9 +23,13 @@ class AjaxController extends BaseGame
 
                 case 'getGameData':
 
-                    $gameData = $this->gameManager->loadGame($this->matchID);
+                    $gameData = (new Loader())->loadData($this->matchID);
 
-                    return $gameData;
+                    $this->gameManager->loadGame($gameData);
+
+                    $dump = $this->gameManager->getDump();
+
+                    return json_encode($dump);
 
                     break;
 
