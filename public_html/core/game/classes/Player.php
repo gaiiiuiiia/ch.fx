@@ -6,6 +6,7 @@ namespace core\game\classes;
 
 use core\game\interfaces\IMap;
 use core\game\interfaces\IPosition;
+use core\game\libs\PathToRowFinder;
 
 class Player extends BasePlayer implements \JsonSerializable
 {
@@ -20,13 +21,29 @@ class Player extends BasePlayer implements \JsonSerializable
 
     protected function setGoalRow()
     {
-        $this->goalRow = $this->position->getX() === 1
+        $this->goalRow = $this->position->getY() === 1
             ? $this->map->getSizeY() : 1;
     }
 
+    public function getGoalRow()
+    {
+        return $this->goalRow;
+    }
+
+    public function getPosition(): Position
+    {
+        return $this->position;
+    }
+
+    /**
+     * @param IPosition|null $position
+     * @return Position[]
+     * the method returns a list of positions
+     * that the player can make from the position.
+     * If position is null, takes a current player position
+     */
     public function showMoves(IPosition $position = null) : array
     {
-
         $position = $position ?: $this->position;
 
         $possibleMoves =  [
@@ -48,14 +65,14 @@ class Player extends BasePlayer implements \JsonSerializable
         return $possibleMoves;
     }
 
+    public function getPathToFinish(): array
+    {
+        return (new PathToRowFinder($this))->findPath($this->position);
+    }
+
     public function move(): Position
     {
         return new Position(1, 1);
-    }
-
-    public function getName() : string
-    {
-        return $this->name;
     }
 
     public function jsonSerialize()

@@ -31,7 +31,6 @@ class Obstacle implements \JsonSerializable
 
     static public function getRandomObstacle(Size $mapSize): array
     {
-
         $direction = mt_rand(0, 1) ? 'row' : 'col';
 
         $from = new Position(
@@ -48,7 +47,6 @@ class Obstacle implements \JsonSerializable
         $obstacle_2 = Obstacle::getNextPartOfObstacle($obstacle_1, $direction);
 
         return [$obstacle_1, $obstacle_2];
-
     }
 
     /**
@@ -58,7 +56,6 @@ class Obstacle implements \JsonSerializable
      */
     static public function isCollided(array $obs1, array $obs2): bool
     {
-
         // obstacle is a array of two Obstacle objects
         // with 'fromx', 'fromy', 'tox', 'toy' props
         foreach ($obs1 as $part1) {
@@ -68,9 +65,7 @@ class Obstacle implements \JsonSerializable
                 }
             }
         }
-
         return false;
-
     }
 
     static private function getNextPartOfObstacle(Obstacle $obstacle, string $direction): Obstacle
@@ -85,19 +80,16 @@ class Obstacle implements \JsonSerializable
         );
 
         return new Obstacle($from, $to);
-
     }
 
     public function isMovePrevented(Position $from, Position $to): bool
     {
-
         if (($this->from->isSamePosition($from) && $this->to->isSamePosition($to))
             || ($this->from->isSamePosition($to)) && $this->to->isSamePosition($from)) {
             return true;
         }
 
         return false;
-
     }
 
 }

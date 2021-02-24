@@ -21,24 +21,17 @@ class Map extends BaseMap implements IMap, \JsonSerializable
 
     /**
      * @param Size $size
-     * @param int $amountRandomObstacles
      * @param array $obstacles - array of initial obstacles. WARNING!
      * it must be like [[Obstacle, Obstacle], ..., [Obstacle, Obstacle]]
      */
-    public function init(Size $size, int $amountRandomObstacles = 0, array $obstacles = [])
+    public function init(Size $size, array $obstacles = [])
     {
         $this->size = $size;
-
         $this->obstacles = $obstacles;
-
-        if ($amountRandomObstacles > 0) {
-            $this->generateObstacles($amountRandomObstacles);
-        }
     }
 
     public function setPlayers(array $listOfPlayers)
     {
-
         if (is_array($listOfPlayers) && $listOfPlayers) {
             foreach ($listOfPlayers as $player) {
                 if (!($player instanceof BasePlayer)) {
@@ -56,7 +49,7 @@ class Map extends BaseMap implements IMap, \JsonSerializable
         }
     }
 
-    private function generateObstacles(int $amount)
+    public function generateObstacles(int $amount)
     {
         $count = 0;
         while ($count < $amount) {
@@ -87,7 +80,7 @@ class Map extends BaseMap implements IMap, \JsonSerializable
         if (is_array($this->players) && $this->players) {
             foreach ($this->players as $_player) {
                 if ($player !== $_player) {
-                    return $_player->get('position');
+                    return $_player->getPosition();
                 }
             }
         }

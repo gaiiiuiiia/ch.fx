@@ -22,6 +22,13 @@ abstract class BasePlayer implements IMovable
         $this->setGoalRow();
     }
 
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
     abstract protected function setGoalRow();
+
+    abstract public function getGoalRow();
 
 }

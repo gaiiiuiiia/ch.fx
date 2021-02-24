@@ -27,9 +27,7 @@ class AjaxController extends BaseGame
 
                     $this->gameManager->loadGame($gameData);
 
-                    $dump = $this->gameManager->getDump();
-
-                    return json_encode($dump);
+                    return json_encode($this->gameManager->getDump());
 
                     break;
 

@@ -246,3 +246,19 @@ Fault: 20-02-2021 0:38:07 - Не верное имя файла для подк�
 file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
 On line 27
 
+Fault: 24-02-2021 14:22:34 - Не верное имя файла для подключения core/game/libs/array
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
+On line 27
+
+Fault: 24-02-2021 14:23:01 - Не верное имя файла для подключения core/game/libs/array
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
+On line 27
+
+Fault: 24-02-2021 14:24:05 - Не верное имя файла для подключения core/game/libs/array
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
+On line 27
+
+Fault: 24-02-2021 14:24:27 - Не верное имя файла для подключения core/game/libs/array
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
+On line 27
+

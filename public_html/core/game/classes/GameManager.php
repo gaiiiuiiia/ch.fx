@@ -21,15 +21,18 @@ class GameManager implements IDumpable
 
     public function initGame(array $gameData)
     {
-
         $this->map = Map::getInstance();
 
         // изначально список обсталков пуст
-        $this->map->init($gameData['mapSize'], $gameData['randomObst'] ? mt_rand(4, 7) : 0);
+        $this->map->init($gameData['mapSize']);
 
         $this->createPlayers($gameData['name'], $gameData['mapSize'], $gameData['amountObst']);
 
         $this->map->setPlayers($this->players);
+
+        if ($gameData['randomObst']) {
+            $this->map->generateObstacles(mt_rand(3, 7));
+        }
 
         // установка очередности хода
         $this->setNextPlayerTurnToMove();
@@ -93,10 +96,10 @@ class GameManager implements IDumpable
 
                 $obstacle = [];
                 foreach ($obs as $part) {
-                    $from_= (array)json_decode($part['from'], true);
+                    $from_ = (array)json_decode($part['from'], true);
                     $from = new Position($from_['x'], $from_['y']);
 
-                    $to_= (array)json_decode($part['to'], true);
+                    $to_ = (array)json_decode($part['to'], true);
                     $to = new Position($to_['x'], $to_['y']);
 
                     $obstacle[] = new Obstacle($from, $to);
@@ -105,11 +108,11 @@ class GameManager implements IDumpable
             }
 
             $this->map = Map::getInstance();
-            $this->map->init($size, 0, $obstacles);
+            $this->map->init($size, $obstacles);
         }
     }
 
-    public function checkObstacle(array $newObstacle)
+    public function checkObstacle(array $obst)
     {
         // проверка обстакла на корректность не наползает ли он куда и не закрывает ли игрока
 
@@ -118,26 +121,37 @@ class GameManager implements IDumpable
         if ($allObstacles) {
 
             // проверка препятствий на наложение друг на друга
-            foreach ($allObstacles as $obstacle) {
-                if (Obstacle::isCollided($obstacle, $newObstacle)) {
+            foreach ($allObstacles as $obst_) {
+                if (Obstacle::isCollided($obst_, $obst)) {
                     return false;
                 }
             }
 
             // проверка на наличие хода для игроков
-            /*foreach ($this->players as $player) {
-                if (!$player->getPathToFinish($allObstacles + $newObstacle)) {
-                    return false;
-                }
-            }*/
+            try {
+                $newObstacles = $allObstacles;
+                $newObstacles[] = $obst;
+                $this->map->setObstacles($newObstacles);  // объединил два массива. оператор + не подходит
 
+                foreach ($this->players as $player) {
+                    if (!$player->getPathToFinish()) {
+                        return false;
+                    }
+                }
+            } catch (\Exception $e) {
+                // описал такой проброс, чтобы выполнилось finally.
+                // без него, в самом верху программы,
+                // выполняется exit() и finally не выполняется
+                throw $e;
+            } finally {
+                $this->map->setObstacles($allObstacles);
+            }
         }
         return true;
     }
 
     protected function setNextPlayerTurnToMove()
     {
-
         $this->turnToMove = $this->turnToMove
             ? ($this->turnToMove + 1) % count($this->players)
             : mt_rand(0, count($this->players) - 1);

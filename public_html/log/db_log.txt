@@ -26,3 +26,11 @@ Fault: 11-02-2021 17:47:15 - Ошибка в SQL запросе: SELECT match_lo
 file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\model\BaseModel.php
 In line 33
 
+Fault: 24-02-2021 18:31:12 - Ошибка в SQL запросе: INSERT INTO matches (date,players) VALUES (NOW(),'Тест - Fox(AI)') - 2006 MySQL server has gone away
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\model\BaseModel.php
+In line 33
+
+Fault: 24-02-2021 18:40:20 - Ошибка в SQL запросе: INSERT INTO matches (date,players) VALUES (NOW(),'Тест - Fox(AI)') - 2006 MySQL server has gone away
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\model\BaseModel.php
+In line 33
+

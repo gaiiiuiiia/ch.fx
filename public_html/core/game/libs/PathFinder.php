@@ -4,20 +4,19 @@
 namespace core\game\libs;
 
 
-use core\game\classes\Map;
-use core\game\interfaces\IMovable;
+use core\game\classes\BasePlayer;
+use core\game\interfaces\IMap;
+use core\game\interfaces\IPosition;
 
 abstract class PathFinder
 {
 
-    protected $map;
     protected $obj;
 
-    public function __construct(IMovable $obj, Map $map) {
-        $this->map = $map;
+    public function __construct(BasePlayer $obj) {
         $this->obj = $obj;
     }
 
-    public abstract function findPath(array $position) : array;
+    public abstract function findPath(IPosition $position) : array;
 
 }

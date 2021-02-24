@@ -98,9 +98,9 @@ function showObstacles(data) {
             // для отладки
             // ставлю случайный цвет препятствию, хотя в стилях они все красные
             let color = [
-                256,
-                getRandomInt(0, 200),
-                getRandomInt(0, 100),
+                getRandomInt(0, 256),
+                getRandomInt(0, 256),
+                getRandomInt(0, 256),
             ].join(',');
 
             for (let part of obstacle) {

@@ -4,8 +4,6 @@
 namespace core\game\classes;
 
 
-use core\base\controller\Singleton;
-
 abstract class BaseMap
 {
 
