@@ -262,3 +262,15 @@ Fault: 24-02-2021 14:24:27 - Не верное имя файла для подк
 file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
 On line 27
 
+Fault: 25-02-2021 20:57:21 - Не верное имя файла для подключения core/game/controller/Gen204Controller
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
+On line 27
+
+Fault: 25-02-2021 20:57:25 - Не верное имя файла для подключения core/game/controller/Gen204Controller
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
+On line 27
+
+Fault: 25-02-2021 20:57:30 - Не верное имя файла для подключения core/game/controller/Gen204Controller
+file E:\myfiles\Programs\OpenServer\domains\ch.fx\public_html\core\base\settings\internalSettings.php
+On line 27
+

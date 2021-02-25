@@ -220,6 +220,11 @@ body {
     min-width: 50px;
 }
 
+.highlighted {
+    transition: background-color 0.3s ease;
+    background-color: #4aff46;
+}
+
 .player {
     font-size: 10px;
     text-align: center;

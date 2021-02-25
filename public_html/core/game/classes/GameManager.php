@@ -46,13 +46,6 @@ class GameManager implements IDumpable
         $this->map->setPlayers($this->players);
         $this->turnToMove = $gameData['turnToMove'];
 
-        return json_encode($gameData);
-
-    }
-
-    public function get($property)
-    {
-        return self::getInstance()->$property;
     }
 
     private function createPlayers(string $name, Size $mapSize, int $amountObst)

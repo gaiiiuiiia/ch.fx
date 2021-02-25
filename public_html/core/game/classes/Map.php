@@ -7,7 +7,6 @@ namespace core\game\classes;
 use core\base\controller\Singleton;
 use core\base\exceptions\GameException;
 use core\game\interfaces\IMap;
-use core\game\interfaces\IMovable;
 use core\game\interfaces\IPosition;
 
 
@@ -65,17 +64,32 @@ class Map extends BaseMap implements IMap, \JsonSerializable
         return true;
     }
 
-    public function get($property)
+    public function expandObstacles(): array
     {
-        return self::getInstance()->$property;
+        $allPossibleObstacles = [];
+        for ($x = 1; $x < $this->getSizeX() ; $x++) {
+            for ($y = 1; $y < $this->getSizeY(); $y++) {
+                // генерирую как горизонтальные, так и вертикальные части в одном цикле for
+                for ($i = 0; $i < 2; $i++) {
+                    $part = new Obstacle(new Position($x, $y), new Position($x + $i, $y + 1 - $i));
+                    $obstacle = [$part, Obstacle::getNextPartOfObstacle($part)];
+                    if (GameManager::getInstance()->checkObstacle($obstacle)) {
+                        $allPossibleObstacles[] = $obstacle;
+                    }
+                }
+            }
+        }
+
+        return $allPossibleObstacles;
     }
 
     /**
      * @param $player - Объект Player.
      * Метод возвращает позицию оппонента $player
-     * @return false
+     * @return Position
+     * @throws GameException
      */
-    public function getOpponentPosition(BasePlayer $player)
+    public function getOpponentPosition(BasePlayer $player): Position
     {
         if (is_array($this->players) && $this->players) {
             foreach ($this->players as $_player) {
@@ -85,7 +99,8 @@ class Map extends BaseMap implements IMap, \JsonSerializable
             }
         }
 
-        return false;
+        throw new GameException("Не удалось определить позицию оппонента для {$player->getName()}");
+
     }
 
     public function isMovePreventedByObstacle(IPosition $from, IPosition $to)
@@ -119,11 +134,6 @@ class Map extends BaseMap implements IMap, \JsonSerializable
             'obstacles' => json_encode($this->obstacles),
             'players' => json_encode($this->players),
         ];
-    }
-
-    public function pathToFinish(IMovable $obj): array
-    {
-        return [];
     }
 
     public function getObstacles(): array

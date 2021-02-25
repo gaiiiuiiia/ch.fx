@@ -20,7 +20,6 @@ window.onload = () => {
     // если показано поле, загрузить информацию игры
     if (document.querySelector('.game__field')) {
         showGame();
-        setClickOnPlayerListener();
     }
 
 };
@@ -30,7 +29,7 @@ function showGame() {
     Ajax({
         type: 'post',
         data: {
-            ajax:'getGameData',
+            ajax: 'getGameData',
         },
     }).then( (result) => {
 
@@ -41,6 +40,7 @@ function showGame() {
 
             showPlayers(gameData['players']);
             showObstacles(gameData['map']['obstacles']);
+            setClickOnPlayerListener();
 
         }
         catch (e) {
@@ -55,16 +55,27 @@ function showGame() {
 
 function setClickOnPlayerListener() {
 
-    document.querySelector('#p1').onclick = (e) => {
+    for (const player of document.getElementsByClassName('player')) {
+        console.log(player);
+        player.onclick = (e) => {
+            Ajax({
+                type: 'post',
+                data: {
+                    ajax: 'getPossibleMoves',
+                    name: e.target.innerText,
+                },
+            }).then( (result) => {
+                result = JSON.parse(result);
+                for (let point of result) {
+                    let fieldTile = document.getElementById(`tile-${point['x']}-${point['y']}`);
+                    fieldTile.classList.add('highlighted', 'standby-click');
+                }
+            }).catch();
 
-        getPossibleMoves();
-
+        }
     }
 }
 
-function getPossibleMoves() {
-
-}
 
 function showPlayers(data) {
 

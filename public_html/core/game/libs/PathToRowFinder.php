@@ -24,7 +24,7 @@ class PathToRowFinder extends PathFinder
             return [$position];
         }
 
-        $iterLimit = 50;
+        $iterLimit = 70;
         $usedPositions = [];  // пройденные точки ['cost' => [position, position, ...]]
         $deq = new \SplQueue();
 
@@ -64,7 +64,6 @@ class PathToRowFinder extends PathFinder
         }
 
         if (!$iterLimit) {
-            echo "плохи дела... для {$this->obj->getName()} <br>";
             return [];
         }
 

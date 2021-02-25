@@ -31,6 +31,23 @@ class AjaxController extends BaseGame
 
                     break;
 
+                case 'getPossibleMoves':
+                    $name = $this->ajaxData['name'];
+
+                    $gameData = (new Loader())->loadData($this->matchID);
+
+                    $this->gameManager->loadGame($gameData);
+
+                    foreach ($this->gameManager->getDump()['players'] as $player) {
+                        if ($player->getName() === $name) {
+                            $res = $player->showMoves();
+                            sort($res);  // так в JS придет массив, а не связный список
+                            return json_encode($res);
+                        }
+                    }
+
+                    break;
+
                 case 'endGame':
 
                     unset($_SESSION['match_id']);
