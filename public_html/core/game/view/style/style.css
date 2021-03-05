@@ -220,8 +220,17 @@ body {
     min-width: 50px;
 }
 
-.highlighted {
+.border--highlighted {
+    transition: background-color 0.4s ease;
+    background-color: #4aff46;
+}
+
+.tile--highlighted {
     transition: background-color 0.3s ease;
+    background-color: #a8cba8;
+}
+
+.standby-click {
     background-color: #4aff46;
 }
 

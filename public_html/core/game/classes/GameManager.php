@@ -45,6 +45,10 @@ class GameManager implements IDumpable
         $this->loadPlayers($gameData['players']);
         $this->map->setPlayers($this->players);
         $this->turnToMove = $gameData['turnToMove'];
+    }
+
+    public function processMove()
+    {
 
     }
 
@@ -59,19 +63,15 @@ class GameManager implements IDumpable
 
     private function loadPlayers(array $data)
     {
-
         if ($data) {
-
             foreach ($data as $player) {
                 $pos_ = json_decode($player['position'], true);
                 $position = new Position($pos_['x'], $pos_['y']);
                 $this->players[] = new Player($player['name'], $position, $this->map, $player['amountObstacles']);
             }
-
         } else {
             throw new GameException('Ошибка загрузки игроков');
         }
-
     }
 
     private function loadMap(array $data)
@@ -103,6 +103,11 @@ class GameManager implements IDumpable
             $this->map = Map::getInstance();
             $this->map->init($size, $obstacles);
         }
+    }
+
+    public function getPossibleObstacles()
+    {
+        return $this->map->expandObstacles();
     }
 
     public function checkObstacle(array $obst)
@@ -145,9 +150,20 @@ class GameManager implements IDumpable
 
     protected function setNextPlayerTurnToMove()
     {
-        $this->turnToMove = $this->turnToMove
-            ? ($this->turnToMove + 1) % count($this->players)
-            : mt_rand(0, count($this->players) - 1);
+        if ($this->turnToMove) {
+            if ($this->players) {
+                foreach ($this->players as $player) {
+                    if ($player->getName() === $this->turnToMove) {
+                        $nextPlayerIndex = array_search($player, $this->players) + 1;
+                    }
+                }
+            }
+        }
+        else {
+            $nextPlayerIndex = mt_rand(0, count($this->players) - 1);
+        }
+
+        $this->turnToMove = $this->players[$nextPlayerIndex]->getName();
     }
 
     public function getDump(): array

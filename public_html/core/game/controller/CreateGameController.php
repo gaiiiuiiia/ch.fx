@@ -36,13 +36,12 @@ class CreateGameController extends BaseGame
             else {
                 $this->createUserData();
 
-                //$this->matchID = $this->gameManager->initGame($this->userData);
-
                 $this->gameManager->initGame($this->userData);
 
                 $this->matchID = (new DBDumper($this->gameManager))->saveDataToDB();  // сохраняю данные в базу
 
                 $_SESSION['match_id'] = $this->matchID;
+                $_SESSION['name'] = $this->userData['name'];
             }
         }
 

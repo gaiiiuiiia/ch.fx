@@ -31,6 +31,8 @@ const Ajax = (set) => {
                 if (set.data.hasOwnProperty(i)) {
                     body += '&' + i + '=' + set.data[i];
                 }
+
+
             }
         }
     }

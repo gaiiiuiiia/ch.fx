@@ -24,7 +24,6 @@ class AjaxController extends BaseGame
                 case 'getGameData':
 
                     $gameData = (new Loader())->loadData($this->matchID);
-
                     $this->gameManager->loadGame($gameData);
 
                     return json_encode($this->gameManager->getDump());
@@ -35,7 +34,6 @@ class AjaxController extends BaseGame
                     $name = $this->ajaxData['name'];
 
                     $gameData = (new Loader())->loadData($this->matchID);
-
                     $this->gameManager->loadGame($gameData);
 
                     foreach ($this->gameManager->getDump()['players'] as $player) {
@@ -48,9 +46,29 @@ class AjaxController extends BaseGame
 
                     break;
 
+                case 'getPossibleObstacles':
+
+                    $gameData = (new Loader())->loadData($this->matchID);
+                    $this->gameManager->loadGame($gameData);
+
+                    $obstacles = $this->gameManager->getPossibleObstacles();
+
+                    return json_encode($obstacles);
+
+                    break;
+
+                case 'move':
+
+                    $gameData = (new Loader())->loadData($this->matchID);
+                    $this->gameManager->loadGame($gameData);
+                    $position = explode(',', $this->ajaxData['position']);
+
+                    break;
+
                 case 'endGame':
 
                     unset($_SESSION['match_id']);
+                    unset($_SESSION['name']);
 
                     return PATH;
 
