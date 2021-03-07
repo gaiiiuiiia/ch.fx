@@ -47,9 +47,19 @@ class GameManager implements IDumpable
         $this->turnToMove = $gameData['turnToMove'];
     }
 
-    public function processMove()
+    public function processMove(array $data)
     {
 
+    }
+
+    public function processObstacle(array $data)
+    {
+
+        if ($this->players) {
+
+        }
+
+        return;
     }
 
     private function createPlayers(string $name, Size $mapSize, int $amountObst)
@@ -150,6 +160,8 @@ class GameManager implements IDumpable
 
     protected function setNextPlayerTurnToMove()
     {
+        $nextPlayerIndex = null;
+
         if ($this->turnToMove) {
             if ($this->players) {
                 foreach ($this->players as $player) {
@@ -159,9 +171,7 @@ class GameManager implements IDumpable
                 }
             }
         }
-        else {
-            $nextPlayerIndex = mt_rand(0, count($this->players) - 1);
-        }
+        $nextPlayerIndex = $nextPlayerIndex ?: mt_rand(0, count($this->players) - 1);
 
         $this->turnToMove = $this->players[$nextPlayerIndex]->getName();
     }

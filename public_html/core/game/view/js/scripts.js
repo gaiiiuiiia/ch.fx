@@ -1,4 +1,3 @@
-
 window.onload = () => {
 
     // событие на кнопку "завершение игры"
@@ -61,12 +60,19 @@ function setClickOnTileListener() {
     let tiles = document.getElementsByClassName('game__field-cell-tile');
 
     for (let tile of [...tiles]) {
-        tile.onclick = function (e) {
+        tile.onclick = function () {
             if (this.classList.contains('standby-click')) {
-                processMove(this);
+
+                let coords = this.id.split('-').slice(1);
+                let data = {type: 'move'};
+                data['x'] = coords[0];
+                data['y'] = coords[1];
+                processMove(data);
+
+            } else {
+                hidePossibleMoves();
+                hidePossibleObstacles();
             }
-            hidePossibleMoves();
-            hidePossibleObstacles();
         };
     }
 }
@@ -86,8 +92,7 @@ function setClickOnPlayerListener() {
                     playerCache.possibleMoves = result;
                     showPossibleMoves(playerCache.possibleMoves);
                 });
-            }
-            else {
+            } else {
                 showPossibleMoves(playerCache.possibleMoves);
             }
 
@@ -97,8 +102,7 @@ function setClickOnPlayerListener() {
                         playerCache.possibleObstacles = result;
                         showPossibleObstacles();
                     });
-                }
-                else {
+                } else {
                     showPossibleObstacles();
                 }
             }
@@ -106,13 +110,17 @@ function setClickOnPlayerListener() {
     }
 }
 
-function processMove(tile) {
+function processMove(data) {
+
+    hidePossibleMoves();
+    hidePossibleObstacles();
+
     Ajax({
         type: 'post',
         data: {
-            ajax: 'move',
+            ajax: 'makeMove',
             name: PLAYER_NAME,
-            position: tile.id.split('-').slice(1),
+            moveData: JSON.stringify(data),
         },
     }).then((result) => {
         result = JSON.parse(result);
@@ -120,9 +128,24 @@ function processMove(tile) {
     }).catch();
 }
 
+function response(data) {
+    if (data['status'] === 'ok') {
+        showPlayers(data['players']);
+        showObstacles(data['map']['obstacles']);
+        nextPlayerMove();
+    } else {
+        // wrong move !!!
+        alert('Wrong move. doing nothing');
+    }
+}
+
+function nextPlayerMove() {
+
+}
+
 function getPossibleMoves(playerName) {
 
-    return new Promise( (resolve, reject) => {
+    return new Promise((resolve, reject) => {
         Ajax({
             type: 'post',
             data: {
@@ -136,7 +159,7 @@ function getPossibleMoves(playerName) {
             }
             resolve(possibleMoves);
         }).catch();
-    } );
+    });
 }
 
 function getPossibleObstacles() {
@@ -186,7 +209,7 @@ function showPossibleObstacles() {
                 || playerCache.possibleObstacles[i]['eventListeners'] === 'undefined') {
 
                 playerCache.possibleObstacles[i]['eventListeners'] = {
-                    _mousedown: obstacleMouseClickWrapper(playerCache.possibleObstacles[i][0]),
+                    _mousedown: obstacleMouseClickWrapper(playerCache.possibleObstacles[i]),
                     _mouseover: obstacleMouseOverWrapper(playerCache.possibleObstacles[i][0], playerCache.possibleObstacles[i]),
                     _mouseleave: obstacleMouseLeaveWrapper(playerCache.possibleObstacles[i][0], playerCache.possibleObstacles[i]),
                 }
@@ -195,68 +218,6 @@ function showPossibleObstacles() {
             playerCache.possibleObstacles[i][0].addEventListener('mousedown', playerCache.possibleObstacles[i]['eventListeners']._mousedown);
             playerCache.possibleObstacles[i][0].addEventListener('mouseover', playerCache.possibleObstacles[i]['eventListeners']._mouseover);
             playerCache.possibleObstacles[i][0].addEventListener('mouseleave', playerCache.possibleObstacles[i]['eventListeners']._mouseleave);
-        }
-    }
-}
-
-const obstacleMouseClickWrapper = function (partObstacle) {
-    return function () {
-        console.log('Obstacle pressed!');
-    };
-};
-
-const obstacleMouseOverWrapper = function (partObstacle, obstacle)  {
-    return function () {
-        partObstacle.classList.add('standby-click');
-        obstacle.forEach((part) => {
-            part.classList.add('border--highlighted');
-        });
-    };
-};
-
-const obstacleMouseLeaveWrapper = function (partObstacle, obstacle) {
-    return function () {
-        partObstacle.classList.remove('standby-click');
-        obstacle.forEach((part) => {
-            part.classList.remove('border--highlighted');
-        });
-    };
-};
-
-function response(data) {
-    if (data['status'] === 'ok') {
-        showPlayers(data['players']);
-        showObstacles(data['map']['obstacles']);
-        nextPlayerMove();
-    } else {
-        // wrong move !!!
-        alert('Wrong move');
-    }
-}
-
-function nextPlayerMove() {
-
-}
-
-function hidePossibleMoves() {
-    if (playerCache.possibleMoves !== 'undefined' && playerCache.possibleMoves) {
-        for (let tile of [...playerCache.possibleMoves]) {
-            if (tile.classList.contains('tile--highlighted')) {
-                tile.classList.remove('tile--highlighted', 'standby-click');
-            }
-        }
-    }
-}
-
-function hidePossibleObstacles() {
-
-    if (playerCache.possibleObstacles !== 'undefined' && playerCache.possibleObstacles) {
-        for (let obstacle of [...playerCache.possibleObstacles]) {
-            if ('eventListeners' in obstacle && obstacle['eventListeners'] !== 'undefined') {
-                obstacle[0].removeEventListener('mousedown', obstacle['eventListeners']._mousedown);
-                obstacle[0].removeEventListener('mouseover', obstacle['eventListeners']._mouseover);
-                obstacle[0].removeEventListener('mouseleave', obstacle['eventListeners']._mouseleave);
-            }
         }
     }
 }
@@ -322,3 +283,63 @@ function showObstacles(data) {
     }
 
 }
+
+function hidePossibleMoves() {
+    if (playerCache.possibleMoves !== 'undefined' && playerCache.possibleMoves) {
+        for (let tile of [...playerCache.possibleMoves]) {
+            if (tile.classList.contains('tile--highlighted')) {
+                tile.classList.remove('tile--highlighted', 'standby-click');
+            }
+        }
+    }
+}
+
+function hidePossibleObstacles() {
+
+    if (playerCache.possibleObstacles !== 'undefined' && playerCache.possibleObstacles) {
+        for (let obstacle of [...playerCache.possibleObstacles]) {
+            if ('eventListeners' in obstacle && obstacle['eventListeners'] !== 'undefined') {
+                obstacle[0].removeEventListener('mousedown', obstacle['eventListeners']._mousedown);
+                obstacle[0].removeEventListener('mouseover', obstacle['eventListeners']._mouseover);
+                obstacle[0].removeEventListener('mouseleave', obstacle['eventListeners']._mouseleave);
+            }
+        }
+    }
+}
+
+const obstacleMouseClickWrapper = function (obstacle) {
+    return function () {
+
+        let data = {type: 'obstacle'};
+
+        for (let i = 0; i < obstacle.length; i++) {
+            let coordinates = obstacle[i].id.split('-').slice(1);
+            data[`obst${i + 1}`] = {
+                'fromx': coordinates[0],
+                'fromy': coordinates[1],
+                'tox': coordinates[2],
+                'toy': coordinates[3],
+            };
+        }
+
+        processMove(data);
+    };
+};
+
+const obstacleMouseOverWrapper = function (partObstacle, obstacle) {
+    return function () {
+        partObstacle.classList.add('standby-click');
+        obstacle.forEach((part) => {
+            part.classList.add('border--highlighted');
+        });
+    };
+};
+
+const obstacleMouseLeaveWrapper = function (partObstacle, obstacle) {
+    return function () {
+        partObstacle.classList.remove('standby-click');
+        obstacle.forEach((part) => {
+            part.classList.remove('border--highlighted');
+        });
+    };
+};

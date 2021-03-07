@@ -57,11 +57,31 @@ class AjaxController extends BaseGame
 
                     break;
 
-                case 'move':
+                case 'makeMove':
 
                     $gameData = (new Loader())->loadData($this->matchID);
                     $this->gameManager->loadGame($gameData);
-                    $position = explode(',', $this->ajaxData['position']);
+
+                    $moveData = json_decode($this->ajaxData['moveData'], true);
+
+                    $data = [
+                        'playerName' => $this->ajaxData['name'],
+                    ];
+
+                    switch ($moveData['type']) {
+                        case 'obstacle':
+                            $data['obstacle'] = array_slice($moveData, 1);
+                            $this->gameManager->processObstacle($data);
+
+                            break;
+
+                        case 'move':
+                            $data['position'] = array_slice($moveData, 1);
+                            $this->gameManager->processMove($data);
+                            break;
+                    }
+
+                    return json_encode($this->gameManager->getDump());
 
                     break;
 
