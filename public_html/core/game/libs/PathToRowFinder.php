@@ -33,7 +33,7 @@ class PathToRowFinder extends PathFinder
 
         while ($iterLimit) {
 
-            $newPositions = $this->obj->showMoves($current['position']);
+            $newPositions = $this->obj->showMoves($current['position'], true);
 
             if ($newPositions) {
 

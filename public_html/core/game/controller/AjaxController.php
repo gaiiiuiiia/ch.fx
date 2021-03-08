@@ -91,8 +91,20 @@ class AjaxController extends BaseGame
                             break;
 
                         case 'move':
+
                             $data['position'] = array_slice($moveData, 1);
-                            $this->gameManager->processMove($data);
+                            if ($this->gameManager->processMove($data)) {
+                                (new DBDumper($this->gameManager))->saveDataToDB($this->matchID);
+                                $result = $this->gameManager->getDump();
+                                $result['status'] = 'ok';
+                                $result['type'] = 'move';
+                            }
+                            else {
+                                $result['status'] = 'fail';
+                            }
+
+                            return json_encode($result);
+
                             break;
                     }
 

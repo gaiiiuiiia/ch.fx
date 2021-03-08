@@ -47,8 +47,21 @@ class GameManager implements IDumpable
         $this->turnToMove = $gameData['turnToMove'];
     }
 
-    public function processMove(array $data)
+    public function processMove(array $data): bool
     {
+        $player = $this->getPlayerByName($data['playerName']);
+
+        $playerPossibleMoves = $player->showMoves();
+
+        $newPos = new Position($data['position']['x'], $data['position']['y']);
+
+        if ($newPos->isSamePositionInArray($playerPossibleMoves)) {
+            $player->setPosition($newPos);
+            $this->setNextPlayerTurnToMove();
+            return true;
+        }
+
+        return false;
 
     }
 

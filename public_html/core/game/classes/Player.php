@@ -35,14 +35,19 @@ class Player extends BasePlayer implements \JsonSerializable
         return $this->position;
     }
 
+    public function setPosition(Position $position)
+    {
+        $this->position = $position;
+    }
+
     /**
      * @param IPosition|null $position
-     * @return Position[]
-     * the method returns a list of positions
+     * @param bool $ignoreOpponent
+     * @return Position[] * the method returns a list of positions
      * that the player can make from the position.
      * If position is null, takes a current player position
      */
-    public function showMoves(IPosition $position = null) : array
+    public function showMoves(IPosition $position = null, bool $ignoreOpponent = false) : array
     {
         $position = $position ?: $this->position;
 
@@ -54,7 +59,7 @@ class Player extends BasePlayer implements \JsonSerializable
         ];
 
         foreach ($possibleMoves as $key => $move) {
-            if ($move === $this->map->getOpponentPosition($this)
+            if (($move->isSamePosition($this->map->getOpponentPosition($this)) && !$ignoreOpponent)
                 || $this->map->isMovePreventedByObstacle($position, $move)
                 || !$this->map->isInBoard($move)) {
 

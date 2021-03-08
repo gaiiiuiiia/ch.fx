@@ -95,7 +95,15 @@ function setClickOnPlayerListener() {
                     showPossibleMoves(playerCache.possibleMoves);
                 });
             } else {
-                showPossibleMoves(playerCache.possibleMoves);
+                if (!playerCache.possibleMoves) {
+                    getPossibleMoves(playerName).then(result => {
+                        playerCache.possibleMoves = result;
+                        showPossibleMoves(playerCache.possibleMoves);
+                    });
+                }
+                else {
+                    showPossibleMoves(playerCache.possibleMoves);
+                }
             }
 
             if (playerName === PLAYER_NAME && playerCache.amountObstacles) {
@@ -115,6 +123,7 @@ function setClickOnPlayerListener() {
 function processMove(data) {
     hidePossibleMoves();
     hidePossibleObstacles();
+
     Ajax({
         type: 'post',
         data: {
@@ -129,15 +138,27 @@ function processMove(data) {
 }
 
 function response(data) {
+
     if (data['status'] === 'ok') {
+
+        playerCache.possibleMoves = null;
 
         if (data['type'] === 'obstacle') {
             showObstacles(data['map']['obstacles']);
-            getPossibleObstacles().then(result => {
-                playerCache.possibleObstacles = result;
-                showPossibleObstacles();
-            });
             setAmountObstacles(data['players']);
+            if (playerCache.amountObstacles) {
+                getPossibleObstacles().then(result => {
+                    playerCache.possibleObstacles = result;
+                    showPossibleObstacles();
+                });
+            }
+            else {
+                playerCache.possibleObstacles = null;
+            }
+        }
+        else if (data['type'] === 'move') {
+            console.log(data);
+            animateMove(data['players']);
         }
 
         nextPlayerMove();
@@ -145,6 +166,65 @@ function response(data) {
         // wrong move !!!
         alert('Wrong move. doing nothing');
     }
+}
+
+function animateMove(playersData) {
+
+    if (playersData !== 'undefined' && playersData ) {
+
+        let playersOnBoard = document.querySelectorAll('.player');
+
+        for (let player of playersData) {
+
+            for (let pob of playersOnBoard) {
+
+                if (pob.innerText === player['name']) {
+
+                    let currentTile = pob.parentElement;
+                    let playerNewPosition = JSON.parse(player['position']);
+                    let newTile = document.getElementById(['tile', playerNewPosition['x'], playerNewPosition['y']].join('-'));
+
+                    if (currentTile !== newTile) {
+
+                        pob.style.position = 'relative';
+
+                        let [dx, dy] = getDistanceBetweenTiles(newTile, currentTile);
+
+                        let animation = pob.animate([
+                            {transform: 'translate(0)'},
+                            {transform: `translate(${dx}px, ${dy}px)`}
+                        ], {
+                            duration: 700,
+                            easing: 'cubic-bezier(.84,-0.49,.67,1.3)',
+                        });
+
+                        animation.addEventListener('finish', function () {
+                            newTile.appendChild(pob);
+                        });
+
+
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+    function getDistanceBetweenTiles(tile1, tile2) {
+        let tile1Info = tile1.getBoundingClientRect();
+        let tile2Info = tile2.getBoundingClientRect();
+
+        return [
+            tile1Info.x - tile2Info.x,
+            tile1Info.y - tile2Info.y,
+        ];
+
+    }
+
 }
 
 function nextPlayerMove() {
@@ -275,8 +355,11 @@ function showObstacles(data) {
                 let obst = document.getElementById(
                     `obst-${from['x']}-${from['y']}-${to['x']}-${to['y']}`);
 
-                obst.classList.add('game__field-cell-border--active');
-                obst.style.backgroundColor = `rgb(${color})`;
+                setTimeout(() => {
+                    obst.classList.add('game__field-cell-border--active');
+                    obst.style.backgroundColor = `rgb(${color})`;
+                }, Math.random() * 400)
+
             }
         }
     }

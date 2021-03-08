@@ -10,6 +10,6 @@ interface IMovable
 
     public function move() : Position;
 
-    public function showMoves(IPosition $position) : array;
+    public function showMoves(IPosition $position, bool $ignoreOpponent) : array;
 
 }

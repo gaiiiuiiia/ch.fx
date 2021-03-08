@@ -210,7 +210,12 @@ body {
 }
 
 .game__field-cell-border--active {
+    position: relative;
     background-color: red;
+    animation-name: setObstacle;
+    animation-duration: 0.5s;
+    animation-fill-mode: forwards;
+    animation-timing-function: ease-in-out;
 }
 
 .game__field-cell-border--vertical {
@@ -222,12 +227,12 @@ body {
 }
 
 .border--highlighted {
-    transition: background-color 0.4s ease;
+    transition: background-color 0.2s ease-in;
     background-color: #4aff46;
 }
 
 .tile--highlighted {
-    transition: background-color 0.3s ease;
+    transition: background-color 0.2s ease-in;
     background-color: #a8cba8;
 }
 
@@ -248,4 +253,17 @@ body {
 
 .footer {
     background: #616161;
+}
+
+@keyframes setObstacle {
+    0% {
+        bottom: 10px;
+        opacity: 30%;
+        box-shadow: 0 10px 30px 0 #666666;
+    }
+    100% {
+        bottom: 0;
+        opacity: 100%;
+        box-shadow: 4px 2px 10px 0 #666666;
+    }
 }
