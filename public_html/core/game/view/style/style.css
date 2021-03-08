@@ -204,6 +204,7 @@ body {
 
 .game__field-cell-border {
     background-color: #fff;
+    transition: background-color 0.3s ease;
     min-width: 6px;
     min-height: 6px;
 }

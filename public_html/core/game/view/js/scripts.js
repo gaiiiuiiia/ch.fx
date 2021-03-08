@@ -29,6 +29,7 @@ const playerCache = {
     name: null,
     possibleMoves: null,
     possibleObstacles: null,
+    amountObstacles: null,
 };
 
 function processGame() {
@@ -44,6 +45,7 @@ function processGame() {
 
             showPlayers(gameData['players']);
             showObstacles(gameData['map']['obstacles']);
+            setAmountObstacles(gameData['players']);
             setClickOnTileListener();
             setClickOnPlayerListener();
 
@@ -96,7 +98,7 @@ function setClickOnPlayerListener() {
                 showPossibleMoves(playerCache.possibleMoves);
             }
 
-            if (playerName === PLAYER_NAME) {
+            if (playerName === PLAYER_NAME && playerCache.amountObstacles) {
                 if (!playerCache.possibleObstacles) {
                     getPossibleObstacles().then(result => {
                         playerCache.possibleObstacles = result;
@@ -111,10 +113,8 @@ function setClickOnPlayerListener() {
 }
 
 function processMove(data) {
-
     hidePossibleMoves();
     hidePossibleObstacles();
-
     Ajax({
         type: 'post',
         data: {
@@ -130,8 +130,16 @@ function processMove(data) {
 
 function response(data) {
     if (data['status'] === 'ok') {
-        showPlayers(data['players']);
-        showObstacles(data['map']['obstacles']);
+
+        if (data['type'] === 'obstacle') {
+            showObstacles(data['map']['obstacles']);
+            getPossibleObstacles().then(result => {
+                playerCache.possibleObstacles = result;
+                showPossibleObstacles();
+            });
+            setAmountObstacles(data['players']);
+        }
+
         nextPlayerMove();
     } else {
         // wrong move !!!
@@ -140,7 +148,7 @@ function response(data) {
 }
 
 function nextPlayerMove() {
-
+    console.log('next player turn to move...');
 }
 
 function getPossibleMoves(playerName) {
@@ -269,11 +277,8 @@ function showObstacles(data) {
 
                 obst.classList.add('game__field-cell-border--active');
                 obst.style.backgroundColor = `rgb(${color})`;
-
             }
-
         }
-
     }
 
     function getRandomInt(min, max) {
@@ -315,12 +320,12 @@ const obstacleMouseClickWrapper = function (obstacle) {
         for (let i = 0; i < obstacle.length; i++) {
             let coordinates = obstacle[i].id.split('-').slice(1);
             data[`obst${i + 1}`] = {
-                'fromx': coordinates[0],
-                'fromy': coordinates[1],
-                'tox': coordinates[2],
-                'toy': coordinates[3],
+                from: {x: coordinates[0], y: coordinates[1]},
+                to: {x: coordinates[2], y: coordinates[3]},
             };
         }
+
+        obstacle['eventListeners']._mouseleave();
 
         processMove(data);
     };
@@ -343,3 +348,13 @@ const obstacleMouseLeaveWrapper = function (partObstacle, obstacle) {
         });
     };
 };
+
+function setAmountObstacles(players) {
+
+    for (let player of players) {
+        if (player['name'] === PLAYER_NAME) {
+            playerCache.amountObstacles = player['amountObstacles'];
+            break;
+        }
+    }
+}

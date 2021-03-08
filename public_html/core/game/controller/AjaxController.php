@@ -4,6 +4,7 @@
 namespace core\game\controller;
 
 
+use core\game\classes\DBDumper;
 use core\game\classes\Loader;
 
 class AjaxController extends BaseGame
@@ -70,8 +71,22 @@ class AjaxController extends BaseGame
 
                     switch ($moveData['type']) {
                         case 'obstacle':
+
+                            $result = [];
+
                             $data['obstacle'] = array_slice($moveData, 1);
-                            $this->gameManager->processObstacle($data);
+
+                            if ($this->gameManager->processObstacle($data)) {
+                                (new DBDumper($this->gameManager))->saveDataToDB($this->matchID);
+                                $result = $this->gameManager->getDump();
+                                $result['status'] = 'ok';
+                                $result['type'] = 'obstacle';
+                            }
+                            else {
+                                $result['status'] = 'fail';
+                            }
+
+                            return json_encode($result);
 
                             break;
 

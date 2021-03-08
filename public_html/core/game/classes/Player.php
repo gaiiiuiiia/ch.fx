@@ -70,6 +70,16 @@ class Player extends BasePlayer implements \JsonSerializable
         return (new PathToRowFinder($this))->findPath($this->position);
     }
 
+    public function getAmountObstacles(): int
+    {
+        return $this->amountObstacles;
+    }
+
+    public function setAmountObstacles(int $amount)
+    {
+        $this->amountObstacles = $amount;
+    }
+
     public function move(): Position
     {
         return new Position(1, 1);

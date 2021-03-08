@@ -29,6 +29,16 @@ class Map extends BaseMap implements IMap, \JsonSerializable
         $this->obstacles = $obstacles;
     }
 
+    public function getObstacles(): array
+    {
+        return $this->obstacles;
+    }
+
+    public function getPlayers(): array
+    {
+        return $this->players;
+    }
+
     public function setPlayers(array $listOfPlayers)
     {
         if (is_array($listOfPlayers) && $listOfPlayers) {
@@ -134,15 +144,5 @@ class Map extends BaseMap implements IMap, \JsonSerializable
             'obstacles' => json_encode($this->obstacles),
             'players' => json_encode($this->players),
         ];
-    }
-
-    public function getObstacles(): array
-    {
-        return $this->obstacles;
-    }
-
-    public function getPlayers(): array
-    {
-        return $this->players;
     }
 }

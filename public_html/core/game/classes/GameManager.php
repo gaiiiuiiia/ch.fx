@@ -52,14 +52,35 @@ class GameManager implements IDumpable
 
     }
 
-    public function processObstacle(array $data)
+    public function processObstacle(array $data): bool
     {
+        $player = $this->getPlayerByName($data['playerName']);
+        $playerAmountObstacles = $player->getAmountObstacles();
 
-        if ($this->players) {
+        if ($playerAmountObstacles > 0) {
 
+            $newObst = [];
+
+            foreach ($data['obstacle'] as $obst) {
+                $newObst[] = new Obstacle(
+                    new Position($obst['from']['x'], $obst['from']['y']),
+                    new Position($obst['to']['x'], $obst['to']['y'])
+                );
+            }
+
+            if ($this->checkObstacle($newObst)) {
+                $newObstacles = $this->map->getObstacles();
+                $newObstacles[] = $newObst;
+                $this->map->setObstacles($newObstacles);
+            }
+
+            $player->setAmountObstacles($playerAmountObstacles - 1);
+            $this->setNextPlayerTurnToMove();
+
+            return true;
         }
 
-        return;
+        return false;
     }
 
     private function createPlayers(string $name, Size $mapSize, int $amountObst)
@@ -166,7 +187,7 @@ class GameManager implements IDumpable
             if ($this->players) {
                 foreach ($this->players as $player) {
                     if ($player->getName() === $this->turnToMove) {
-                        $nextPlayerIndex = array_search($player, $this->players) + 1;
+                        $nextPlayerIndex = intdiv(array_search($player, $this->players) + 1, 2);
                     }
                 }
             }
