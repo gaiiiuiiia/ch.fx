@@ -8,7 +8,7 @@ use core\game\classes\Position;
 interface IMovable
 {
 
-    public function move() : Position;
+    public function move(Position $position): bool;
 
     public function showMoves(IPosition $position, bool $ignoreOpponent) : array;
 

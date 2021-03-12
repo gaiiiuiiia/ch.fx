@@ -19,27 +19,6 @@ class Player extends BasePlayer implements \JsonSerializable
         $this->amountObstacles = $amountObstacles;
     }
 
-    protected function setGoalRow()
-    {
-        $this->goalRow = $this->position->getY() === 1
-            ? $this->map->getSizeY() : 1;
-    }
-
-    public function getGoalRow()
-    {
-        return $this->goalRow;
-    }
-
-    public function getPosition(): Position
-    {
-        return $this->position;
-    }
-
-    public function setPosition(Position $position)
-    {
-        $this->position = $position;
-    }
-
     /**
      * @param IPosition|null $position
      * @param bool $ignoreOpponent
@@ -47,11 +26,11 @@ class Player extends BasePlayer implements \JsonSerializable
      * that the player can make from the position.
      * If position is null, takes a current player position
      */
-    public function showMoves(IPosition $position = null, bool $ignoreOpponent = false) : array
+    public function showMoves(IPosition $position = null, bool $ignoreOpponent = false): array
     {
         $position = $position ?: $this->position;
 
-        $possibleMoves =  [
+        $possibleMoves = [
             new Position($position->getX() - 1, $position->getY()),
             new Position($position->getX(), $position->getY() - 1),
             new Position($position->getX() + 1, $position->getY()),
@@ -59,7 +38,7 @@ class Player extends BasePlayer implements \JsonSerializable
         ];
 
         foreach ($possibleMoves as $key => $move) {
-            if (($move->isSamePosition($this->map->getOpponentPosition($this)) && !$ignoreOpponent)
+            if (($move->isSamePosition($this->map->getOpponent($this)->getPosition()) && !$ignoreOpponent)
                 || $this->map->isMovePreventedByObstacle($position, $move)
                 || !$this->map->isInBoard($move)) {
 
@@ -85,9 +64,117 @@ class Player extends BasePlayer implements \JsonSerializable
         $this->amountObstacles = $amount;
     }
 
-    public function move(): Position
+    public function move(Position $position): bool
     {
-        return new Position(1, 1);
+        $this->position = $position;
+        return true;
+    }
+
+    public function makeMove()
+    {
+        if ($this->amountObstacles &&
+            $obstacleToBlock = $this->getObstacleToBlockPlayer($this->map->getOpponent($this), 4)) {
+
+            return ['type' => 'obstacle', 'data' => $obstacleToBlock];
+        }
+        else if ($possibleMoves = $this->showMoves()) {
+            $path = $this->getPathToFinish();
+
+            if ($path[0]->isSamePositionInArray($possibleMoves)) {
+                $position = $path[0];
+            }
+            else {
+                $anotherMovesLengthPathToFinish = [];
+                foreach ($possibleMoves as $move) {
+                    $anotherMovesLengthPathToFinish[array_search($move, $possibleMoves)]
+                        = count((new PathToRowFinder($this))->findPath($move));
+                }
+                $shortPathLength = min($anotherMovesLengthPathToFinish);
+                $position = $possibleMoves[array_search($shortPathLength, $anotherMovesLengthPathToFinish)];
+            }
+
+            return ['type' => 'move', 'data' => $position];
+        }
+
+        return false;
+    }
+
+    /**
+     * метод возвращает объект Obstacle, если он увеличивает путь до финиша оппоненту не менее чем на $value единиц
+     * @param Player $player
+     * @param int $value - ценность препятствия
+     * Результат может быть null
+     * @return array
+     */
+    private function getObstacleToBlockPlayer(Player $player, int $value = 2)
+    {
+        $possibleObstaclesAroundPlayer = $this->getPossibleObstaclesAroundPlayer($player);
+
+        if ($possibleObstaclesAroundPlayer) {
+
+            $oldPath = $player->getPathToFinish();
+
+            $oldObstacles = $this->map->getObstacles();
+
+            foreach ($possibleObstaclesAroundPlayer as $obstacle) {
+
+                try {
+                    $newObstacles = $oldObstacles;
+                    $newObstacles[] = $obstacle;
+                    $this->map->setObstacles($newObstacles);  // объединил два массива. оператор + не подходит
+
+                    $newPath = $player->getPathToFinish();
+
+                    if (count($newPath) - count($oldPath) >= $value) {
+                        return $obstacle;
+                    }
+
+                } catch (\Exception $e) {
+                    // описал такой проброс, чтобы выполнилось finally.
+                    // без него, в самом верху программы,
+                    // выполняется exit() и finally не выполняется
+                    throw $e;
+                } finally {
+                    $this->map->setObstacles($oldObstacles);
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private function getPossibleObstaclesAroundPlayer(Player $player): array
+    {
+
+        $preventMoveObstacles = [];
+
+        $playerMoves = $player->showMoves();
+
+        if ($playerMoves) {
+
+            $allPossibleObstacles = $this->map->expandObstacles();
+
+            if ($allPossibleObstacles) {
+
+                $playerPosition = $player->getPosition();
+
+                foreach ($playerMoves as $possibleMove) {
+
+                    foreach ($allPossibleObstacles as $obstacle) {
+
+                        foreach ($obstacle as $part) {
+
+                            if ($part->isMovePrevented($playerPosition, $possibleMove)) {
+                                $preventMoveObstacles[] = $obstacle;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return $preventMoveObstacles;
     }
 
     public function jsonSerialize()
@@ -96,6 +183,7 @@ class Player extends BasePlayer implements \JsonSerializable
             'name' => $this->name,
             'position' => json_encode($this->position),
             'amountObstacles' => $this->amountObstacles,
+            'goalRow' => $this->goalRow,
         ];
     }
 

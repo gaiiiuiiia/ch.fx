@@ -10,7 +10,8 @@ use core\game\classes\Loader;
 class AjaxController extends BaseGame
 {
 
-    public function ajax() {
+    public function ajax()
+    {
 
         if ($this->ajaxData['ajax']) {
 
@@ -32,13 +33,13 @@ class AjaxController extends BaseGame
                     break;
 
                 case 'getPossibleMoves':
-                    $name = $this->ajaxData['name'];
+                    $playerName = $this->ajaxData['name'];
 
                     $gameData = (new Loader())->loadData($this->matchID);
                     $this->gameManager->loadGame($gameData);
 
                     foreach ($this->gameManager->getDump()['players'] as $player) {
-                        if ($player->getName() === $name) {
+                        if ($player->getName() === $playerName) {
                             $res = $player->showMoves();
                             sort($res);  // так в JS придет массив, а не связный список
                             return json_encode($res);
@@ -58,7 +59,7 @@ class AjaxController extends BaseGame
 
                     break;
 
-                case 'makeMove':
+                case 'processMove':
 
                     $gameData = (new Loader())->loadData($this->matchID);
                     $this->gameManager->loadGame($gameData);
@@ -81,8 +82,7 @@ class AjaxController extends BaseGame
                                 $result = $this->gameManager->getDump();
                                 $result['status'] = 'ok';
                                 $result['type'] = 'obstacle';
-                            }
-                            else {
+                            } else {
                                 $result['status'] = 'fail';
                             }
 
@@ -92,14 +92,15 @@ class AjaxController extends BaseGame
 
                         case 'move':
 
+                            $result = [];
+
                             $data['position'] = array_slice($moveData, 1);
                             if ($this->gameManager->processMove($data)) {
                                 (new DBDumper($this->gameManager))->saveDataToDB($this->matchID);
                                 $result = $this->gameManager->getDump();
                                 $result['status'] = 'ok';
                                 $result['type'] = 'move';
-                            }
-                            else {
+                            } else {
                                 $result['status'] = 'fail';
                             }
 
@@ -108,8 +109,24 @@ class AjaxController extends BaseGame
                             break;
                     }
 
-                    return json_encode($this->gameManager->getDump());
+                    break;
 
+                case 'makeMove':
+
+                    $playerName = $this->ajaxData['name'];
+                    $gameData = (new Loader())->loadData($this->matchID);
+                    $this->gameManager->loadGame($gameData);
+
+                    if ($type = $this->gameManager->letPlayerMove($playerName)) {
+                        (new DBDumper($this->gameManager))->saveDataToDB($this->matchID);
+                        $result = $this->gameManager->getDump();
+                        $result['status'] = 'ok';
+                        $result['type'] = $type;
+                    } else {
+                        $result['status'] = 'fail';
+                    }
+
+                    return json_encode($result);
                     break;
 
                 case 'endGame':
@@ -122,7 +139,6 @@ class AjaxController extends BaseGame
                     break;
 
             }
-
 
 
         }

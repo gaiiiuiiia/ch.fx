@@ -27,8 +27,32 @@ abstract class BasePlayer implements IMovable
         return $this->name;
     }
 
-    abstract protected function setGoalRow();
+    public function getGoalRow()
+    {
+        return $this->goalRow;
+    }
 
-    abstract public function getGoalRow();
+    public function getPosition(): Position
+    {
+        return $this->position;
+    }
+
+    public function setPosition(Position $position)
+    {
+        $this->position = $position;
+    }
+
+    public function setGoalRow(int $goalRow = null)
+    {
+        if (!$goalRow) {
+            $this->goalRow = $this->position->getY() === 1
+                ? $this->map->getSizeY() : 1;
+        }
+        else {
+            $this->goalRow = $goalRow;
+        }
+    }
+
+
 
 }

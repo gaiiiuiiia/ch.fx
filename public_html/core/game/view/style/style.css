@@ -184,6 +184,13 @@ body {
     border-collapse: collapse;
 }
 
+.game__panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 22px;
+}
+
 .game__field-cell-tile {
     display: flex;
     justify-content: center;

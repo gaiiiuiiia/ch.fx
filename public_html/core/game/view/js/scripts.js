@@ -30,6 +30,8 @@ const playerCache = {
     possibleMoves: null,
     possibleObstacles: null,
     amountObstacles: null,
+    isHighlightObstacles: false,
+    turnToMove: null,
 };
 
 function processGame() {
@@ -48,6 +50,8 @@ function processGame() {
             setAmountObstacles(gameData['players']);
             setClickOnTileListener();
             setClickOnPlayerListener();
+            nextPlayerMove(gameData['turnToMove']);
+            showCurrentTurnToMove();
 
         } catch (e) {
             alert('Внутрення ошибка!');
@@ -63,13 +67,13 @@ function setClickOnTileListener() {
 
     for (let tile of [...tiles]) {
         tile.onclick = function () {
+
+            playerCache.isHighlightObstacles = false;
+
             if (this.classList.contains('standby-click')) {
 
-                let coords = this.id.split('-').slice(1);
-                let data = {type: 'move'};
-                data['x'] = coords[0];
-                data['y'] = coords[1];
-                processMove(data);
+                let tileData = getTileData(this);
+                processMove(tileData);
 
             } else {
                 hidePossibleMoves();
@@ -77,6 +81,12 @@ function setClickOnTileListener() {
             }
         };
     }
+
+    function getTileData(tile) {
+        let coords = tile.id.split('-').slice(1);
+        return {type: 'move', x: coords[0], y: coords[1]};
+    }
+
 }
 
 function setClickOnPlayerListener() {
@@ -100,20 +110,22 @@ function setClickOnPlayerListener() {
                         playerCache.possibleMoves = result;
                         showPossibleMoves(playerCache.possibleMoves);
                     });
-                }
-                else {
+                } else {
                     showPossibleMoves(playerCache.possibleMoves);
                 }
             }
 
-            if (playerName === PLAYER_NAME && playerCache.amountObstacles) {
-                if (!playerCache.possibleObstacles) {
-                    getPossibleObstacles().then(result => {
-                        playerCache.possibleObstacles = result;
+            if (playerName === PLAYER_NAME) {
+                playerCache.isHighlightObstacles = true;
+                if (playerCache.amountObstacles) {
+                    if (!playerCache.possibleObstacles) {
+                        getPossibleObstacles().then(result => {
+                            playerCache.possibleObstacles = result;
+                            showPossibleObstacles();
+                        });
+                    } else {
                         showPossibleObstacles();
-                    });
-                } else {
-                    showPossibleObstacles();
+                    }
                 }
             }
         }
@@ -127,108 +139,61 @@ function processMove(data) {
     Ajax({
         type: 'post',
         data: {
-            ajax: 'makeMove',
+            ajax: 'processMove',
             name: PLAYER_NAME,
             moveData: JSON.stringify(data),
         },
     }).then((result) => {
         result = JSON.parse(result);
-        response(result);
+        responseMove(result);
     }).catch();
 }
 
-function response(data) {
+function responseMove(data) {
 
     if (data['status'] === 'ok') {
 
         playerCache.possibleMoves = null;
+        playerCache.possibleObstacles = null;
 
-        if (data['type'] === 'obstacle') {
-            showObstacles(data['map']['obstacles']);
-            setAmountObstacles(data['players']);
-            if (playerCache.amountObstacles) {
-                getPossibleObstacles().then(result => {
-                    playerCache.possibleObstacles = result;
-                    showPossibleObstacles();
-                });
-            }
-            else {
-                playerCache.possibleObstacles = null;
-            }
-        }
-        else if (data['type'] === 'move') {
-            console.log(data);
-            animateMove(data['players']);
-        }
+        showObstacles(data['map']['obstacles']);
+        setAmountObstacles(data['players']);
+        animateMove(data['players']);
 
-        nextPlayerMove();
+        nextPlayerMove(data['turnToMove']);
+        showCurrentTurnToMove();
     } else {
         // wrong move !!!
         alert('Wrong move. doing nothing');
     }
 }
 
-function animateMove(playersData) {
+function nextPlayerMove(playerName) {
 
-    if (playersData !== 'undefined' && playersData ) {
+    playerCache.turnToMove = playerName;
 
-        let playersOnBoard = document.querySelectorAll('.player');
+    if (playerCache.turnToMove === PLAYER_NAME) {
+        console.log('now is Test turn to move')
+    } else {
+        console.log('now is Fox turn to move');
 
-        for (let player of playersData) {
-
-            for (let pob of playersOnBoard) {
-
-                if (pob.innerText === player['name']) {
-
-                    let currentTile = pob.parentElement;
-                    let playerNewPosition = JSON.parse(player['position']);
-                    let newTile = document.getElementById(['tile', playerNewPosition['x'], playerNewPosition['y']].join('-'));
-
-                    if (currentTile !== newTile) {
-
-                        pob.style.position = 'relative';
-
-                        let [dx, dy] = getDistanceBetweenTiles(newTile, currentTile);
-
-                        let animation = pob.animate([
-                            {transform: 'translate(0)'},
-                            {transform: `translate(${dx}px, ${dy}px)`}
-                        ], {
-                            duration: 700,
-                            easing: 'cubic-bezier(.84,-0.49,.67,1.3)',
-                        });
-
-                        animation.addEventListener('finish', function () {
-                            newTile.appendChild(pob);
-                        });
-
-
-
-                    }
-
-                }
-
-            }
-
-        }
-
+        setTimeout(() => makeMove(playerCache.turnToMove), 1000);
     }
-
-    function getDistanceBetweenTiles(tile1, tile2) {
-        let tile1Info = tile1.getBoundingClientRect();
-        let tile2Info = tile2.getBoundingClientRect();
-
-        return [
-            tile1Info.x - tile2Info.x,
-            tile1Info.y - tile2Info.y,
-        ];
-
-    }
-
 }
 
-function nextPlayerMove() {
-    console.log('next player turn to move...');
+function makeMove(playerName) {
+
+    Ajax({
+        type: 'post',
+        data: {
+            ajax: 'makeMove',
+            name: playerName,
+        },
+    }).then((result) => {
+        result = JSON.parse(result);
+        responseMove(result);
+    }).catch();
+
 }
 
 function getPossibleMoves(playerName) {
@@ -276,6 +241,79 @@ function getPossibleObstacles() {
     });
 }
 
+function animateMove(playersData) {
+
+    if (playersData !== 'undefined' && playersData) {
+
+        let playersOnBoard = document.querySelectorAll('.player');
+
+        for (let player of playersData) {
+
+            for (let pob of playersOnBoard) {
+
+                if (pob.innerText === player['name']) {
+
+                    let currentTile = pob.parentElement;
+                    let playerNewPosition = JSON.parse(player['position']);
+                    let newTile = document.getElementById(['tile', playerNewPosition['x'], playerNewPosition['y']].join('-'));
+
+                    if (currentTile !== newTile) {
+
+                        pob.style.position = 'relative';
+
+                        let [dx, dy] = getDistanceBetweenTiles(newTile, currentTile);
+
+                        let animation = pob.animate([
+                            {transform: 'translate(0)'},
+                            {transform: `translate(${dx}px, ${dy}px)`}
+                        ], {
+                            duration: 400,
+                            easing: 'cubic-bezier(.84,-0.49,.67,1.3)',
+                        });
+
+                        animation.addEventListener('finish', function () {
+                            newTile.appendChild(pob);
+                        });
+
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+    function getDistanceBetweenTiles(tile1, tile2) {
+        let tile1Info = tile1.getBoundingClientRect();
+        let tile2Info = tile2.getBoundingClientRect();
+
+        return [
+            tile1Info.x - tile2Info.x,
+            tile1Info.y - tile2Info.y,
+        ];
+
+    }
+
+}
+
+function showCurrentTurnToMove() {
+
+    let panelTurnToMove = document.querySelector('.game__panel-turn-to-move');
+
+    if (!panelTurnToMove) {
+        let gamePanel = document.querySelector('.game__panel');
+
+        panelTurnToMove = document.createElement('div');
+        panelTurnToMove.classList.add('game__panel-turn-to-move');
+        gamePanel.append(panelTurnToMove);
+    }
+
+    panelTurnToMove.innerHTML = `<hr><p>Сейчас ходит: ${playerCache.turnToMove}!</p>`;
+}
+
 function showPossibleMoves(moves) {
 
     [...moves].forEach(tile => {
@@ -290,7 +328,10 @@ function showPossibleMoves(moves) {
 
 function showPossibleObstacles() {
 
-    if (playerCache.possibleObstacles !== 'undefined' && playerCache.possibleObstacles) {
+    if (playerCache.isHighlightObstacles &&
+        playerCache.possibleObstacles !== 'undefined' &&
+        playerCache.possibleObstacles) {
+
         for (let i = 0; i < playerCache.possibleObstacles.length; i++) {
 
             if (!('eventListeners' in playerCache.possibleObstacles[i])
@@ -383,7 +424,6 @@ function hidePossibleMoves() {
 }
 
 function hidePossibleObstacles() {
-
     if (playerCache.possibleObstacles !== 'undefined' && playerCache.possibleObstacles) {
         for (let obstacle of [...playerCache.possibleObstacles]) {
             if ('eventListeners' in obstacle && obstacle['eventListeners'] !== 'undefined') {

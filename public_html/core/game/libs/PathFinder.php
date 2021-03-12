@@ -5,7 +5,6 @@ namespace core\game\libs;
 
 
 use core\game\classes\BasePlayer;
-use core\game\interfaces\IMap;
 use core\game\interfaces\IPosition;
 
 abstract class PathFinder

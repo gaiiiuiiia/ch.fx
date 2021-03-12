@@ -14,7 +14,7 @@ class PathToRowFinder extends PathFinder
     /**
      * @param IPosition $position
      * @return array
-     * ищет путь для $obj на $map с позиции $position до финишной черты
+     * ищет путь для $obj с позиции $position до финишной черты
      */
     public function findPath(IPosition $position): array
     {
@@ -115,8 +115,6 @@ class PathToRowFinder extends PathFinder
                 throw new GameException('Некорректный путь до финиша');
             })($lastPosition['neighbor'], $usedPositions[$step]);  // вызов функции
         }
-
-        $path[] = $startPosition;
 
         return array_reverse($path);
     }

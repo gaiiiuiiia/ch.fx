@@ -56,13 +56,12 @@ class GameManager implements IDumpable
         $newPos = new Position($data['position']['x'], $data['position']['y']);
 
         if ($newPos->isSamePositionInArray($playerPossibleMoves)) {
-            $player->setPosition($newPos);
+            $player->move($newPos);
             $this->setNextPlayerTurnToMove();
             return true;
         }
 
         return false;
-
     }
 
     public function processObstacle(array $data): bool
@@ -96,6 +95,40 @@ class GameManager implements IDumpable
         return false;
     }
 
+    /**
+     * @param string $playerName
+     * @return bool
+     * @throws GameException
+     * Игрок делает ход - либо ставит препятствие, либо передвигается
+     * В случае успеха возвращает тип хода в виде строки
+     */
+    public function letPlayerMove(string $playerName)
+    {
+        $player = $this->getPlayerByName($playerName);
+        $moveData = $player->makeMove();
+
+        if ($moveData) {
+
+            switch ($moveData['type']) {
+                case 'move':
+                    $player->move($moveData['data']);
+                    break;
+                case 'obstacle':
+                    $obstacles = $this->map->getObstacles();
+                    $obstacles[] = $moveData['data'];
+                    $this->map->setObstacles($obstacles);
+                    $player->setAmountObstacles($player->getAmountObstacles() - 1);
+                    break;
+            }
+
+            $this->setNextPlayerTurnToMove();
+            return $moveData['type'];
+        }
+        else {
+            throw new GameException("Игрок $playerName не смог совершить ход...");
+        }
+    }
+
     private function createPlayers(string $name, Size $mapSize, int $amountObst)
     {
         $p1_pos = new Position((int)ceil($mapSize->getX() / 2), 1);
@@ -108,10 +141,11 @@ class GameManager implements IDumpable
     private function loadPlayers(array $data)
     {
         if ($data) {
-            foreach ($data as $player) {
-                $pos_ = json_decode($player['position'], true);
-                $position = new Position($pos_['x'], $pos_['y']);
-                $this->players[] = new Player($player['name'], $position, $this->map, $player['amountObstacles']);
+            foreach ($data as $playerData) {
+                $pos_ = json_decode($playerData['position'], true);
+                $player = new Player($playerData['name'], new Position($pos_['x'], $pos_['y']), $this->map, $playerData['amountObstacles']);
+                $player->setGoalRow($playerData['goalRow']);
+                $this->players[] = $player;
             }
         } else {
             throw new GameException('Ошибка загрузки игроков');
@@ -194,20 +228,18 @@ class GameManager implements IDumpable
 
     protected function setNextPlayerTurnToMove()
     {
-        $nextPlayerIndex = null;
-
         if ($this->turnToMove) {
             if ($this->players) {
                 foreach ($this->players as $player) {
                     if ($player->getName() === $this->turnToMove) {
-                        $nextPlayerIndex = intdiv(array_search($player, $this->players) + 1, 2);
+                        $nextPlayerIndex = (array_search($player, $this->players) + 1) % count($this->players);
+                        return $this->turnToMove = $this->players[$nextPlayerIndex]->getName();
                     }
                 }
             }
         }
-        $nextPlayerIndex = $nextPlayerIndex ?: mt_rand(0, count($this->players) - 1);
 
-        $this->turnToMove = $this->players[$nextPlayerIndex]->getName();
+        return $this->turnToMove = $this->players[mt_rand(0, count($this->players) - 1)]->getName();
     }
 
     public function getDump(): array

@@ -16,7 +16,8 @@ class Map extends BaseMap implements IMap, \JsonSerializable
     use Singleton;
 
     protected $players;
-    protected $obstacles;
+    protected $obstacles;  // препятсвия, которые стоят на игровом поле
+    protected $possibleObstacles;  // препятствия, которые можно поставить на игровое поле
 
     /**
      * @param Size $size
@@ -76,35 +77,42 @@ class Map extends BaseMap implements IMap, \JsonSerializable
 
     public function expandObstacles(): array
     {
-        $allPossibleObstacles = [];
-        for ($x = 1; $x < $this->getSizeX() ; $x++) {
-            for ($y = 1; $y < $this->getSizeY(); $y++) {
-                // генерирую как горизонтальные, так и вертикальные части в одном цикле for
-                for ($i = 0; $i < 2; $i++) {
-                    $part = new Obstacle(new Position($x, $y), new Position($x + $i, $y + 1 - $i));
-                    $obstacle = [$part, Obstacle::getNextPartOfObstacle($part)];
-                    if (GameManager::getInstance()->checkObstacle($obstacle)) {
-                        $allPossibleObstacles[] = $obstacle;
+
+        if (!$this->possibleObstacles) {
+
+            $allPossibleObstacles = [];
+            for ($x = 1; $x < $this->getSizeX() ; $x++) {
+                for ($y = 1; $y < $this->getSizeY(); $y++) {
+                    // генерирую как горизонтальные, так и вертикальные части в одном цикле for
+                    for ($i = 0; $i < 2; $i++) {
+                        $part = new Obstacle(new Position($x, $y), new Position($x + $i, $y + 1 - $i));
+                        $obstacle = [$part, Obstacle::getNextPartOfObstacle($part)];
+                        if (GameManager::getInstance()->checkObstacle($obstacle)) {
+                            $allPossibleObstacles[] = $obstacle;
+                        }
                     }
                 }
             }
+
+            $this->possibleObstacles = $allPossibleObstacles;
+
         }
 
-        return $allPossibleObstacles;
+        return $this->possibleObstacles;
     }
 
     /**
      * @param $player - Объект Player.
-     * Метод возвращает позицию оппонента $player
-     * @return Position
+     * Метод возвращает оппонента $player
+     * @return Player
      * @throws GameException
      */
-    public function getOpponentPosition(BasePlayer $player): Position
+    public function getOpponent(BasePlayer $player): Player
     {
         if (is_array($this->players) && $this->players) {
             foreach ($this->players as $_player) {
                 if ($player !== $_player) {
-                    return $_player->getPosition();
+                    return $_player;
                 }
             }
         }
