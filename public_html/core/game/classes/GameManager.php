@@ -18,6 +18,7 @@ class GameManager implements IDumpable
     protected $map;
 
     protected $turnToMove;  // Игрок, чья очередь делать ход
+    protected $winner;
 
     public function initGame(array $gameData)
     {
@@ -45,23 +46,29 @@ class GameManager implements IDumpable
         $this->loadPlayers($gameData['players']);
         $this->map->setPlayers($this->players);
         $this->turnToMove = $gameData['turnToMove'];
+        $this->winner = $gameData['winner'];
     }
 
     public function processMove(array $data): bool
     {
         $player = $this->getPlayerByName($data['playerName']);
 
-        $playerPossibleMoves = $player->showMoves();
+        $newPos = new Position($data['moveData']['x'], $data['moveData']['y']);
 
-        $newPos = new Position($data['position']['x'], $data['position']['y']);
-
-        if ($newPos->isSamePositionInArray($playerPossibleMoves)) {
+        if ($this->canPlayerMove($player, $newPos)) {
             $player->move($newPos);
-            $this->setNextPlayerTurnToMove();
+            if (!$this->hasWinner()) {
+                $this->setNextPlayerTurnToMove();
+            }
             return true;
         }
 
         return false;
+    }
+
+    private function canPlayerMove(BasePlayer $player, Position $position): bool
+    {
+        return $position->isSamePositionInArray($player->showMoves($player->getPosition(), false));
     }
 
     public function processObstacle(array $data): bool
@@ -73,7 +80,7 @@ class GameManager implements IDumpable
 
             $newObst = [];
 
-            foreach ($data['obstacle'] as $obst) {
+            foreach ($data['moveData'] as $obst) {
                 $newObst[] = new Obstacle(
                     new Position($obst['from']['x'], $obst['from']['y']),
                     new Position($obst['to']['x'], $obst['to']['y'])
@@ -99,10 +106,11 @@ class GameManager implements IDumpable
      * @param string $playerName
      * @return bool
      * @throws GameException
-     * Игрок делает ход - либо ставит препятствие, либо передвигается
-     * В случае успеха возвращает тип хода в виде строки
+     * Метод просит игрока с именем $playerName сделать ход.
+     * Игрок возвращает массив с двумя значениями: 1 - тип хода, 2 - данные хода
+     * Тип может быть двух видов - move и obstacle.
      */
-    public function letPlayerMove(string $playerName)
+    public function letPlayerMove(string $playerName): bool
     {
         $player = $this->getPlayerByName($playerName);
         $moveData = $player->makeMove();
@@ -121,12 +129,34 @@ class GameManager implements IDumpable
                     break;
             }
 
-            $this->setNextPlayerTurnToMove();
-            return $moveData['type'];
-        }
-        else {
+            if (!$this->hasWinner()) {
+                $this->setNextPlayerTurnToMove();
+            }
+            return true;
+        } else {
             throw new GameException("Игрок $playerName не смог совершить ход...");
         }
+    }
+
+    protected function hasWinner(): bool
+    {
+        if ($this->winner) {
+            return true;
+        }
+        else {
+            foreach ($this->players as $player) {
+                if ($this->checkWin($player)) {
+                    $this->winner = $player->getName();
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    protected function checkWin(BasePlayer $player): bool
+    {
+        return $player->isOnGoalRow();
     }
 
     private function createPlayers(string $name, Size $mapSize, int $amountObst)
@@ -249,6 +279,7 @@ class GameManager implements IDumpable
             'map' => $this->map,
             'turnToMove' => $this->turnToMove,
             'playerNames' => $this->getPlayerNames(' - '),
+            'winner' => $this->winner,
         ];
     }
 

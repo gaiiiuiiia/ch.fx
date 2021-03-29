@@ -68,47 +68,31 @@ class AjaxController extends BaseGame
 
                     $data = [
                         'playerName' => $this->ajaxData['name'],
+                        'moveData' => array_slice($moveData, 1),
                     ];
+
+                    $method = null;
 
                     switch ($moveData['type']) {
                         case 'obstacle':
-
-                            $result = [];
-
-                            $data['obstacle'] = array_slice($moveData, 1);
-
-                            if ($this->gameManager->processObstacle($data)) {
-                                (new DBDumper($this->gameManager))->saveDataToDB($this->matchID);
-                                $result = $this->gameManager->getDump();
-                                $result['status'] = 'ok';
-                                $result['type'] = 'obstacle';
-                            } else {
-                                $result['status'] = 'fail';
-                            }
-
-                            return json_encode($result);
-
+                            $method  = "processObstacle";
                             break;
 
                         case 'move':
-
-                            $result = [];
-
-                            $data['position'] = array_slice($moveData, 1);
-                            if ($this->gameManager->processMove($data)) {
-                                (new DBDumper($this->gameManager))->saveDataToDB($this->matchID);
-                                $result = $this->gameManager->getDump();
-                                $result['status'] = 'ok';
-                                $result['type'] = 'move';
-                            } else {
-                                $result['status'] = 'fail';
-                            }
-
-                            return json_encode($result);
-
+                            $method = 'processMove';
                             break;
                     }
 
+                    if (method_exists($this->gameManager, $method) && $this->gameManager->$method($data)) {
+                        (new DBDumper($this->gameManager))->saveDataToDB($this->matchID);
+                        $result = $this->gameManager->getDump();
+                        $result['status'] = 'ok';
+                    }
+                    else {
+                        $result['status'] = 'fail';
+                    }
+
+                    return json_encode($result);
                     break;
 
                 case 'makeMove':
@@ -117,11 +101,10 @@ class AjaxController extends BaseGame
                     $gameData = (new Loader())->loadData($this->matchID);
                     $this->gameManager->loadGame($gameData);
 
-                    if ($type = $this->gameManager->letPlayerMove($playerName)) {
+                    if ($this->gameManager->letPlayerMove($playerName)) {
                         (new DBDumper($this->gameManager))->saveDataToDB($this->matchID);
                         $result = $this->gameManager->getDump();
                         $result['status'] = 'ok';
-                        $result['type'] = $type;
                     } else {
                         $result['status'] = 'fail';
                     }

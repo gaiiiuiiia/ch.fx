@@ -10,6 +10,7 @@
         <?php if (isset($_SESSION['name'])): ?>
             <script>
                 const PLAYER_NAME = "<?= $_SESSION['name']?>";
+                const PATH = "<?= PATH?>";
             </script>
         <?php endif; ?>
 

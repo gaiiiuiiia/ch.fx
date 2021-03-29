@@ -258,6 +258,22 @@ body {
     cursor: default;
 }
 
+.end-game {
+    position: absolute;
+    top: 30%;
+    min-width: 100%;
+    min-height: 100px;
+    text-align: center;
+}
+
+.end-game--win {
+    background-color: #34e348;
+}
+
+.end-game--lose {
+    background-color: #929292;
+}
+
 .footer {
     background: #616161;
 }

@@ -19,6 +19,11 @@ class Player extends BasePlayer implements \JsonSerializable
         $this->amountObstacles = $amountObstacles;
     }
 
+    public function isOnGoalRow(): bool
+    {
+        return $this->position->getY() === $this->goalRow;
+    }
+
     /**
      * @param IPosition|null $position
      * @param bool $ignoreOpponent

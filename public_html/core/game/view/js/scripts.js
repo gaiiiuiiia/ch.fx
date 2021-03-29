@@ -43,7 +43,6 @@ function processGame() {
     }).then((result) => {
         try {
             let gameData = JSON.parse(result);
-            console.log(gameData);
 
             showPlayers(gameData['players']);
             showObstacles(gameData['map']['obstacles']);
@@ -160,12 +159,36 @@ function responseMove(data) {
         setAmountObstacles(data['players']);
         animateMove(data['players']);
 
+        if (data['winner']) {
+            showEndGame(data['winner']);
+            removeClickOnPlayerListener();
+            return;
+        }
+
         nextPlayerMove(data['turnToMove']);
         showCurrentTurnToMove();
     } else {
         // wrong move !!!
         alert('Wrong move. doing nothing');
     }
+}
+
+function showEndGame(winner) {
+
+    let endGameDiv = document.createElement('div');
+    endGameDiv.classList.add('end-game');
+    let text = document.createElement('p');
+    endGameDiv.appendChild(text);
+
+    if (winner === PLAYER_NAME) {
+        text.textContent = "Поздравляю с победой!";
+        endGameDiv.classList.add('end-game--win');
+    } else {
+        text.textContent = "Проигрыш( в следующий раз уж точно повезет...";
+        endGameDiv.classList.add('end-game--lose');
+    }
+
+    document.body.append(endGameDiv);
 }
 
 function nextPlayerMove(playerName) {
@@ -434,6 +457,12 @@ function hidePossibleObstacles() {
         }
     }
 }
+
+function removeClickOnPlayerListener() {
+    for (let player of document.getElementsByClassName('player'))
+        player.onclick = null;
+}
+
 
 const obstacleMouseClickWrapper = function (obstacle) {
     return function () {

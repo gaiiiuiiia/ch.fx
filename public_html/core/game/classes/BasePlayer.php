@@ -53,6 +53,6 @@ abstract class BasePlayer implements IMovable
         }
     }
 
-
+    abstract public function isOnGoalRow(): bool;
 
 }
